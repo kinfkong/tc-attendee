@@ -1,4 +1,4 @@
-package mentorme.security;
+package com.livingprogress.mentorme.security;
 
 
 import com.livingprogress.mentorme.entities.*;

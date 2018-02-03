@@ -1,4 +1,4 @@
-package mentorme.services.springdata;
+package com.livingprogress.mentorme.services.springdata;
 
 import com.livingprogress.mentorme.entities.ForgotPassword;
 import org.springframework.data.jpa.repository.JpaRepository;

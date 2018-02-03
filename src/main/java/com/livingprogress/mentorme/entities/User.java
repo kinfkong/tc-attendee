@@ -49,7 +49,7 @@ public class User extends AuditableEntity {
     @JoinTable(name = "user_user_role",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_role_id")})
-    private List<mentorme.entities.UserRole> roles;
+    private List<UserRole> roles;
 
     /**
      * The email.
@@ -90,7 +90,7 @@ public class User extends AuditableEntity {
      * The user status.
      */
     @Enumerated(STRING)
-    private mentorme.entities.UserStatus status;
+    private UserStatus status;
 
     /**
      * The is virtual user flag.
@@ -111,20 +111,6 @@ public class User extends AuditableEntity {
      * The city.
      */
     private String city;
-
-    /**
-     * The state.
-     */
-    @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "state_id")
-    private State state;
-
-    /**
-     * The country.
-     */
-    @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "country_id")
-    private Country country;
 
     /**
      * The postal code.

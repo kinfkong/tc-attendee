@@ -1,4 +1,4 @@
-package mentorme.services.springdata;
+package com.livingprogress.mentorme.services.springdata;
 
 import com.livingprogress.mentorme.entities.*;
 import com.livingprogress.mentorme.exceptions.ConfigurationException;
@@ -19,7 +19,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -216,61 +215,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      */
     protected void handleNestedProperties(T entity) throws MentorMeException { }
 
-    /**
-     * This method is used to handle nested properties for user.
-     *
-     * @param entity the entity
-     */
-    protected  void handleUserNestedProperties(User entity) {
-        Helper.checkEntity(entity.getCountry(), "entity.country");
-        Helper.checkEntity(entity.getState(), "entity.state");
-    }
 
-    /**
-     * This method is used to handle nested properties for institution user.
-     *
-     * @param entity the entity
-     * @param <T> the entity that extends institution user
-     */
-    protected <T extends InstitutionUser> void handleInstitutionUserNestedProperties(T entity) {
-
-        if (entity.getPersonalInterests() != null) {
-            entity.getPersonalInterests().forEach(p -> p.setUser(entity));
-        } else {
-            entity.setPersonalInterests(Collections.emptyList());
-        }
-
-        if (entity.getProfessionalInterests() != null) {
-            entity.getProfessionalInterests().forEach(p -> p.setUser(entity));
-        } else {
-            entity.setProfessionalInterests(Collections.emptyList());
-        }
-    }
-
-    /**
-     * This method is used to handle nested properties for goal.
-     *
-     * @param entity the entity
-     */
-    protected  void handleGoalNestedProperties(Goal entity) {
-        Helper.checkEntity(entity.getGoalCategory(), "entity.goalCategory");
-        Helper.checkPositive(entity.getNumber(), "entity.number");
-        if (entity.getCustomData() != null) {
-            entity.getCustomData().setGoal(entity);
-        }
-        if (entity.getTasks() != null) {
-            entity.getTasks()
-                  .forEach(t -> {
-                      t.setGoal(entity);
-                      t.setGoalId(entity.getId());
-                      if (t.getCustomData() != null) {
-                          t.getCustomData().setTask(t);
-                      }
-                  });
-        } else {
-            entity.setTasks(Collections.emptyList());
-        }
-    }
 
     /**
      * This method is used to to remap paging options to spring pageable data.

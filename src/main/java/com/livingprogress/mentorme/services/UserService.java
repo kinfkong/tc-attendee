@@ -1,4 +1,4 @@
-package mentorme.services;
+package com.livingprogress.mentorme.services;
 
 import com.livingprogress.mentorme.entities.ForgotPassword;
 import com.livingprogress.mentorme.entities.NewPassword;

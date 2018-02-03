@@ -1,4 +1,4 @@
-package mentorme.utils;
+package com.livingprogress.mentorme.utils;
 
 /**
  * The entity types

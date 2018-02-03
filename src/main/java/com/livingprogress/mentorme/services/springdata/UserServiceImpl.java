@@ -1,4 +1,4 @@
-package mentorme.services.springdata;
+package com.livingprogress.mentorme.services.springdata;
 
 import com.livingprogress.mentorme.entities.ForgotPassword;
 import com.livingprogress.mentorme.entities.NewPassword;
@@ -106,7 +106,6 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     @Override
     protected void handleNestedProperties(User entity) throws MentorMeException {
         super.handleNestedProperties(entity);
-        super.handleUserNestedProperties(entity);
     }
 
     /**

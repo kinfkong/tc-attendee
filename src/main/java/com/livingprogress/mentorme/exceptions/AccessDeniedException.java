@@ -3,7 +3,7 @@ package com.livingprogress.mentorme.exceptions;
 /**
  * This is exception is thrown if a principal does not have access to a specific entity.
  */
-public class AccessDeniedException extends mentorme.exceptions.MentorMeException {
+public class AccessDeniedException extends MentorMeException {
 
     /**
      * <p>

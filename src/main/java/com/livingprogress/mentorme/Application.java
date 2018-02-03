@@ -1,16 +1,14 @@
 package com.livingprogress.mentorme;
 
-import com.livingprogress.mentorme.remote.services.impl.HODClientImpl;
 import com.livingprogress.mentorme.utils.CustomMessageSource;
 import com.livingprogress.mentorme.utils.Helper;
-import org.apache.log4j.MDC;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.DefaultErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestAttributes;
@@ -25,11 +23,7 @@ import java.util.UUID;
  * The main application.
  */
 @SpringBootApplication
-@ComponentScan(basePackages = "com.livingprogress.mentorme",
-        includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                value = HODClientImpl.class),
-        excludeFilters = @ComponentScan.Filter(type = FilterType.ASPECTJ,
-                pattern = "com.livingprogress.mentorme.remote.*.*"))
+@ComponentScan(basePackages = "com.livingprogress.mentorme")
 public class Application {
     /**
      * The request id listener.
@@ -41,7 +35,7 @@ public class Application {
          * @param event the servlet request event.
          */
         public void requestInitialized(ServletRequestEvent event) {
-            MDC.put("RequestId", UUID.randomUUID());
+            ThreadContext.put("RequestId", UUID.randomUUID().toString());
         }
 
         /**
@@ -50,7 +44,7 @@ public class Application {
          * @param event the servlet request event.
          */
         public void requestDestroyed(ServletRequestEvent event) {
-            MDC.clear();
+            ThreadContext.clearAll();
         }
     }
 

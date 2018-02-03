@@ -3,7 +3,7 @@ package com.livingprogress.mentorme.exceptions;
 /**
  * This is exception is thrown if there is no entity with given id.
  */
-public class EntityNotFoundException extends mentorme.exceptions.MentorMeException {
+public class EntityNotFoundException extends MentorMeException {
 
     /**
      * <p>

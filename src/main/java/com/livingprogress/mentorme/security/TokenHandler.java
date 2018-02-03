@@ -1,4 +1,4 @@
-package mentorme.security;
+package com.livingprogress.mentorme.security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.livingprogress.mentorme.aop.LogAspect;

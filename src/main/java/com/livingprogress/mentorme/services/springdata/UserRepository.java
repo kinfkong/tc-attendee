@@ -1,4 +1,4 @@
-package mentorme.services.springdata;
+package com.livingprogress.mentorme.services.springdata;
 
 import com.livingprogress.mentorme.entities.User;
 import com.livingprogress.mentorme.exceptions.MentorMeException;

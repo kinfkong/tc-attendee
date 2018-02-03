@@ -1,4 +1,4 @@
-package mentorme.utils;
+package com.livingprogress.mentorme.utils;
 
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.context.support.ResourceBundleMessageSource;
