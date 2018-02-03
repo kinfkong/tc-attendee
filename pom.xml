@@ -3,24 +3,39 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.livingprogress.mentorme</groupId>
-    <artifactId>mentorme-api</artifactId>
+    <artifactId>attendee-rest-api</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>mentorme-api</name>
+    <name>attendee-rest-api</name>
     <url>http://maven.apache.org</url>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.3.8.RELEASE</version>
+        <version>1.5.10.RELEASE</version>
         <relativePath/>
     </parent>
 
     <properties>
         <java.version>1.8</java.version>
+        <spring.version>5.0.3.RELEASE</spring.version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring.datasource.url>${env.DB_URL}</spring.datasource.url>
+        <spring.datasource.username>${env.DB_USERNAME}</spring.datasource.username>
+        <spring.datasource.password>${env.DB_PASSWORD}</spring.datasource.password>
+        <spring.datasource.maxActive>${env.DB_POOLSIZE}</spring.datasource.maxActive>
+        <server.port>${env.PORT}</server.port>
+        <spring.mail.host>${env.MAIL_SMTP_HOST}</spring.mail.host>
+        <spring.mail.port>${env.MAIL_SMTP_PORT}</spring.mail.port>
+        <spring.mail.username>${env.MAIL_SMTP_USERNAME}</spring.mail.username>
+        <spring.mail.password>${env.MAIL_SMTP_PASSWORD}</spring.mail.password>
+        <spring.mail.properties.mail.smtp.auth>${env.MAIL_SMTP_AUTH_REQUIRED}e</spring.mail.properties.mail.smtp.auth>
+        <spring.mail.properties.mail.smtp.starttls.enable>${env.MAIL_SMTP_STARTTLS_ENABLED}</spring.mail.properties.mail.smtp.starttls.enable>
+        <spring.mail.properties.mail.smtp.starttls.required>${env.MAIL_SMTP_STARTTLS_REQUIRED}</spring.mail.properties.mail.smtp.starttls.required>
+        <mail.from>${env.MAIL_FROM_ADDRESS}</mail.from>
     </properties>
 
     <dependencies>
@@ -74,73 +89,27 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-tools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-bus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.maps</groupId>
-            <artifactId>google-maps-services</artifactId>
-            <version>0.1.16</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.10</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-         <dependency>
-             <groupId>org.springframework.security</groupId>
-             <artifactId>spring-security-test</artifactId>
-             <scope>test</scope>
-         </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.subethamail</groupId>
-            <artifactId>subethasmtp</artifactId>
-            <version>3.1.7</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>mentorme-api</finalName>
+        <finalName>attendee-rest-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -149,7 +118,7 @@
                     <fork>true</fork>
                     <executable>true</executable>
                     <layout>ZIP</layout>
-                    <mainClass>com.livingprogress.mentorme.Application</mainClass>
+                    <mainClass>com.livingprogress.com.livingprogress.mentorme.Application</mainClass>
                 </configuration>
                 <executions>
                     <execution>
@@ -160,59 +129,13 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.5.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.17</version>
                 <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>-classpath</argument>
-                        <classpath />
-                        <argument>com.livingprogress.mentorme.remote.RemoteApplication</argument>
-                    </arguments>
-                    <workingDirectory>${project.build.outputDirectory}</workingDirectory>
+                    <linkXRef>false</linkXRef>
+                    <configLocation>checkstyle.xml</configLocation>
                 </configuration>
-            </plugin>
-            <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-checkstyle-plugin</artifactId>
-                  <version>2.17</version>
-                 <configuration>
-                     <linkXRef>false</linkXRef>
-                     <configLocation>checkstyle.xml</configLocation>
-                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.7.201606060606</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/remote/**</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
