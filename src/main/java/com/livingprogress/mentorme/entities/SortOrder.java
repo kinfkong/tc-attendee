@@ -4,7 +4,7 @@ package com.livingprogress.mentorme.entities;
 /**
  * The sort order.
  */
-public enum  SortOrder {
+public enum SortOrder {
     /**
      * Ascending sort order.
      */

@@ -1,4 +1,4 @@
-package mentorme.entities;
+package com.livingprogress.mentorme.entities;
 
 import lombok.AccessLevel;
 import lombok.Getter;

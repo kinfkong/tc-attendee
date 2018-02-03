@@ -16,7 +16,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Entity
 @Getter
 @Setter
-public class ForgotPassword extends mentorme.entities.IdentifiableEntity {
+public class ForgotPassword extends IdentifiableEntity {
     /**
      * The user id.
      */

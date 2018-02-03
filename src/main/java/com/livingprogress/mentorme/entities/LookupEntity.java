@@ -14,7 +14,7 @@ import javax.persistence.MappedSuperclass;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @MappedSuperclass
-public abstract class LookupEntity extends mentorme.entities.IdentifiableEntity {
+public abstract class LookupEntity extends IdentifiableEntity {
     /**
      * The lookup value.
      */
