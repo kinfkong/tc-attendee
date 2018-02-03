@@ -6,18 +6,17 @@ import com.livingprogress.mentorme.utils.CustomMessageSource;
 import com.livingprogress.mentorme.utils.Helper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.ui.velocity.VelocityEngineUtils;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.Map;
 
 /**
  * The BaseEmail REST controller to provide email related methods.
@@ -32,10 +31,16 @@ public abstract class BaseEmailController {
     private JavaMailSender javaMailSender;
 
     /**
-     * The velocity engine.
+     * The email template engine for body.
      */
     @Autowired
-    private VelocityEngine velocityEngine;
+    private TemplateEngine bodyTemplateEngine;
+
+    /**
+     * The email template engine for subject.
+     */
+    @Autowired
+    private TemplateEngine subjectTemplateEngine;
 
     /**
      * The default from email address.
@@ -51,38 +56,27 @@ public abstract class BaseEmailController {
     @PostConstruct
     protected void checkConfiguration() {
         Helper.checkConfigNotNull(javaMailSender, "javaMailSender");
-        Helper.checkConfigNotNull(velocityEngine, "velocityEngine");
+        Helper.checkConfigNotNull(bodyTemplateEngine, "bodyTemplateEngine");
+        Helper.checkConfigNotNull(subjectTemplateEngine, "subjectTemplateEngine");
         Helper.checkConfigState(Helper.isEmail(fromAddress), "fromAddress should be valid email address!");
     }
-
-    /**
-     * Render email template with template name and model params.
-     *
-     * @param name  the template name
-     * @param model the model params.
-     * @return the email template after render with model params
-     */
-    protected String getTemplate(String name, Map<String, Object> model) {
-        return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, name, Helper.UTF8, model);
-    }
-
 
     /**
      * Send email with to email address, email name and model params.
      *
      * @param toEmail   the to email address.
      * @param emailName the email name.
-     * @param model     the model params.
+     * @param context     the model params.
      * @throws MentorMeException throws if error to send email.
      */
-    protected void sendEmail(String toEmail, String emailName, Map<String, Object> model) throws MentorMeException {
+    protected void sendEmail(String toEmail, String emailName, Context context) throws MentorMeException {
         try {
             MimeMessage mail = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mail);
             helper.setTo(toEmail);
             helper.setFrom(fromAddress);
-            helper.setSubject(getTemplate(emailName + "/subject.vm", model));
-            helper.setText(getTemplate(emailName + "/body.vm", model), true);
+            helper.setSubject(subjectTemplateEngine.process(emailName, context));
+            helper.setText(bodyTemplateEngine.process(emailName, context), true);
             javaMailSender.send(mail);
         } catch (MessagingException | MailException e) {
             throw new MentorMeException(CustomMessageSource.getMessage("sendEmail.error"), e);

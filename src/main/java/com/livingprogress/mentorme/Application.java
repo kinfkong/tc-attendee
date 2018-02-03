@@ -13,6 +13,10 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
@@ -114,6 +118,31 @@ public class Application {
     @Bean
     public ResourceBundleMessageSource messageSource() {
         return new CustomMessageSource();
+    }
+
+    @Bean(name = "bodyTemplateEngine")
+    public TemplateEngine bodyTemplateEngine() {
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.addTemplateResolver(templateResolver("body", TemplateMode.HTML));
+        return templateEngine;
+    }
+
+    @Bean(name = "subjectTemplateEngine")
+    public TemplateEngine subjectTemplateEngine() {
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.addTemplateResolver(templateResolver("subject", TemplateMode.TEXT));
+        return templateEngine;
+    }
+
+    private ITemplateResolver templateResolver(String file, TemplateMode mode) {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("/templates/");
+        templateResolver.setSuffix(file + ".vm");
+        templateResolver.setTemplateMode(mode);
+        templateResolver.setCharacterEncoding("UTF8");
+        templateResolver.setCheckExistence(true);
+        templateResolver.setCacheable(false);
+        return templateResolver;
     }
 
     /**

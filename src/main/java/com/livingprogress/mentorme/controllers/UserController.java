@@ -1,5 +1,6 @@
 package com.livingprogress.mentorme.controllers;
 
+import com.livingprogress.mentorme.entities.*;
 import com.livingprogress.mentorme.exceptions.AccessDeniedException;
 import com.livingprogress.mentorme.exceptions.ConfigurationException;
 import com.livingprogress.mentorme.exceptions.EntityNotFoundException;
@@ -12,11 +13,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.context.Context;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The User REST controller. Is effectively thread safe.
@@ -113,8 +113,8 @@ public class UserController extends BaseEmailController {
      * @throws MentorMeException if any other error occurred during operation
      */
     @RequestMapping(method = RequestMethod.GET)
-    public SearchResult<User> search(@ModelAttribute mentorme.entities.UserSearchCriteria criteria,
-            @ModelAttribute mentorme.entities.Paging paging) throws MentorMeException {
+    public SearchResult<User> search(@ModelAttribute UserSearchCriteria criteria,
+                                     @ModelAttribute Paging paging) throws MentorMeException {
         return userService.search(criteria, paging);
     }
 
@@ -136,7 +136,7 @@ public class UserController extends BaseEmailController {
     @RequestMapping(value = "forgotPassword", method = RequestMethod.PUT)
     public void forgotPassword(@RequestParam(value = "email") String email) throws MentorMeException {
         Helper.checkEmail(email, "email");
-        mentorme.entities.UserSearchCriteria criteria = new mentorme.entities.UserSearchCriteria();
+        UserSearchCriteria criteria = new UserSearchCriteria();
         criteria.setEmail(email);
         SearchResult<User> users = userService.search(criteria, null);
         if (users.getTotal() == 0) {
@@ -144,10 +144,10 @@ public class UserController extends BaseEmailController {
         }
         User user = users.getEntities().get(0);
         long userId = user.getId();
-        mentorme.entities.ForgotPassword forgotPassword = userService.forgotPassword(userId);
-        Map<String, Object> model = new HashMap<>();
-        model.put("user", user);
-        model.put("forgotPassword", forgotPassword);
+        ForgotPassword forgotPassword = userService.forgotPassword(userId);
+        Context model = new Context();
+        model.setVariable("user", user);
+        model.setVariable("forgotPassword", forgotPassword);
         sendEmail(email, "forgotPassword", model);
     }
 
@@ -162,7 +162,7 @@ public class UserController extends BaseEmailController {
      */
     @Transactional
     @RequestMapping(value = "updatePassword", method = RequestMethod.PUT)
-    public boolean updatePassword(@RequestBody mentorme.entities.NewPassword newPassword) throws MentorMeException {
+    public boolean updatePassword(@RequestBody NewPassword newPassword) throws MentorMeException {
         return userService.updatePassword(newPassword);
     }
 

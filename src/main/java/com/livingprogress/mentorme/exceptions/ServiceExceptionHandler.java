@@ -2,7 +2,7 @@ package com.livingprogress.mentorme.exceptions;
 
 import com.livingprogress.mentorme.aop.LogAspect;
 import com.livingprogress.mentorme.utils.Helper;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
