@@ -9,7 +9,6 @@ import com.livingprogress.mentorme.services.UserService;
 import com.livingprogress.mentorme.utils.CustomMessageSource;
 import com.livingprogress.mentorme.utils.Helper;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -166,16 +165,6 @@ public class UserController extends BaseEmailController {
         return userService.updatePassword(newPassword);
     }
 
-    @Transactional
-    @RequestMapping(value = "agreeAgreement", method = RequestMethod.PUT)
-    public void agreeAgreement() throws MentorMeException {
-        User user = userService.getMe();
-        User target = new User();
-        BeanUtils.copyProperties(user, target);
-        target.setAgreedAgreement(true);
-        target.setPassword(null);
-        userService.update(user.getId(), target);
-    }
 
 }
 
