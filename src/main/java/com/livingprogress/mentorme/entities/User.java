@@ -7,9 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import java.math.BigDecimal;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -43,6 +40,18 @@ public class User extends AuditableEntity {
     private String lastName;
 
     /**
+     * The provider id.
+     */
+    @JsonIgnore
+    private String providerId;
+
+    /**
+     * The provider user id.
+     */
+    @JsonIgnore
+    private String providerUserId;
+
+    /**
      * The user roles.
      */
     @ManyToMany(fetch = EAGER)
@@ -56,22 +65,6 @@ public class User extends AuditableEntity {
      */
     private String email;
 
-    /**
-     * The profile picture path.
-     */
-    private String profilePicturePath;
-
-    /**
-     * The provider id.
-     */
-    @JsonIgnore
-    private String providerId;
-
-    /**
-     * The provider user id.
-     */
-    @JsonIgnore
-    private String providerUserId;
 
     /**
      * The access token.
@@ -91,44 +84,5 @@ public class User extends AuditableEntity {
      */
     @Enumerated(STRING)
     private UserStatus status;
-
-    /**
-     * The is virtual user flag.
-     */
-    private boolean isVirtualUser;
-
-    /**
-     * If the user already agreed the agreement.
-     */
-    private boolean isAgreedAgreement;
-
-    /**
-     * The street address.
-     */
-    private String streetAddress;
-
-    /**
-     * The city.
-     */
-    private String city;
-
-    /**
-     * The postal code.
-     */
-    private String postalCode;
-
-    /**
-     * The longitude.
-     */
-    @Max(180)
-    @Min(-180)
-    private BigDecimal longitude;
-
-    /**
-     * The latitude.
-     */
-    @Max(90)
-    @Min(-90)
-    private BigDecimal latitude;
 }
 

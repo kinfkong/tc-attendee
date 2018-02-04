@@ -6,6 +6,7 @@ import com.livingprogress.mentorme.exceptions.ConfigurationException;
 import com.livingprogress.mentorme.exceptions.EntityNotFoundException;
 import com.livingprogress.mentorme.exceptions.MentorMeException;
 import com.livingprogress.mentorme.services.UserService;
+import com.livingprogress.mentorme.services.springdata.TmpUserRepository;
 import com.livingprogress.mentorme.utils.CustomMessageSource;
 import com.livingprogress.mentorme.utils.Helper;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,10 @@ public class UserController extends BaseEmailController {
      */
     @Autowired
     private UserService userService;
+
+
+    @Autowired
+    private TmpUserRepository tmpUserRepository;
 
     /**
      * Check if all required fields are initialized properly.
@@ -118,8 +123,10 @@ public class UserController extends BaseEmailController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "me")
-    public User getMe() throws MentorMeException {
-        return userService.getMe();
+    public TmpUser getMe() throws MentorMeException {
+        System.out.println("executing getMe");
+        return tmpUserRepository.findOne("test@test.com", "testLastName");
+        // return userService.getMe();
     }
 
     /**

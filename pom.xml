@@ -20,13 +20,21 @@
     <properties>
         <java.version>1.8</java.version>
         <spring.version>5.0.3.RELEASE</spring.version>
+        <jackson.version>2.9.4</jackson.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <server.port>${env.PORT}</server.port>
+        <azure.documentdb.uri>${env.COSMOS_DB_URI}</azure.documentdb.uri>
+        <azure.documentdb.key>${env.COSMOS_DB_KEY}</azure.documentdb.key>
+        <azure.documentdb.database>${env.COSMOS_DB_NAME}</azure.documentdb.database>
+
         <spring.datasource.url>${env.DB_URL}</spring.datasource.url>
         <spring.datasource.username>${env.DB_USERNAME}</spring.datasource.username>
         <spring.datasource.password>${env.DB_PASSWORD}</spring.datasource.password>
-        <server.port>${env.PORT}</server.port>
+        <spring.datasource.maxActive>${env.DB_POOLSIZE}</spring.datasource.maxActive>
+
+
         <spring.mail.host>${env.MAIL_SMTP_HOST}</spring.mail.host>
         <spring.mail.port>${env.MAIL_SMTP_PORT}</spring.mail.port>
         <spring.mail.username>${env.MAIL_SMTP_USERNAME}</spring.mail.username>
@@ -58,10 +66,23 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.microsoft.azure/azure-documentdb-spring-boot-starter -->
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-documentdb-spring-boot-starter</artifactId>
+            <version>0.2.2</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
@@ -106,6 +127,7 @@
             <artifactId>thymeleaf</artifactId>
             <version>3.0.9.RELEASE</version>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -118,7 +140,7 @@
                     <fork>true</fork>
                     <executable>true</executable>
                     <layout>ZIP</layout>
-                    <mainClass>com.livingprogress.com.livingprogress.mentorme.Application</mainClass>
+                    <mainClass>com.livingprogress.mentorme.Application</mainClass>
                 </configuration>
                 <executions>
                     <execution>
