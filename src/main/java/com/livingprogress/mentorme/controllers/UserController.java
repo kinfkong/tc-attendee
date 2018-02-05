@@ -9,6 +9,8 @@ import com.livingprogress.mentorme.services.UserService;
 import com.livingprogress.mentorme.services.springdata.TmpUserRepository;
 import com.livingprogress.mentorme.utils.CustomMessageSource;
 import com.livingprogress.mentorme.utils.Helper;
+import com.livingprogress.mentorme.utils.springdata.extensions.Paging;
+import com.livingprogress.mentorme.utils.springdata.extensions.SearchResult;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,7 +59,7 @@ public class UserController extends BaseEmailController {
      * @throws MentorMeException if any other error occurred during operation
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public User get(@PathVariable long id) throws MentorMeException {
+    public User get(@PathVariable String id) throws MentorMeException {
         return userService.get(id);
     }
 
@@ -70,7 +72,7 @@ public class UserController extends BaseEmailController {
      * @throws MentorMeException if any other error occurred during operation
      */
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, value = "signup")
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody User entity) throws MentorMeException {
         return userService.create(entity);
@@ -89,7 +91,7 @@ public class UserController extends BaseEmailController {
      */
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     @Transactional
-    public User update(@PathVariable long id, @RequestBody User entity) throws MentorMeException {
+    public User update(@PathVariable String id, @RequestBody User entity) throws MentorMeException {
         return userService.update(id, entity);
     }
 
@@ -103,7 +105,7 @@ public class UserController extends BaseEmailController {
      */
     @Transactional
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable long id) throws MentorMeException {
+    public void delete(@PathVariable String id) throws MentorMeException {
         userService.delete(id);
     }
 
@@ -149,7 +151,7 @@ public class UserController extends BaseEmailController {
             throw new EntityNotFoundException(CustomMessageSource.getMessage("user.notFound.byEmail", email));
         }
         User user = users.getEntities().get(0);
-        long userId = user.getId();
+        String userId = user.getId();
         ForgotPassword forgotPassword = userService.forgotPassword(userId);
         Context model = new Context();
         model.setVariable("user", user);

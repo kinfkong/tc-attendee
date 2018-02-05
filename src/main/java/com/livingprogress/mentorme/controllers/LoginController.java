@@ -1,6 +1,6 @@
 package com.livingprogress.mentorme.controllers;
 
-import com.livingprogress.mentorme.entities.SearchResult;
+import com.livingprogress.mentorme.utils.springdata.extensions.SearchResult;
 import com.livingprogress.mentorme.entities.User;
 import com.livingprogress.mentorme.entities.UserSearchCriteria;
 import com.livingprogress.mentorme.exceptions.AccessDeniedException;

@@ -1,4 +1,4 @@
-package com.livingprogress.mentorme.entities;
+package com.livingprogress.mentorme.utils.springdata.extensions;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,10 +17,7 @@ public class SearchResult<T> {
      */
     private long total;
 
-    /**
-     * The total pages number.
-     */
-    private int totalPages;
+    private String requestContinuation;
 
     /**
      * The values.

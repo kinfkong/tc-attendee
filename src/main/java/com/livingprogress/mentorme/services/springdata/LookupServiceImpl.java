@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +43,9 @@ public class LookupServiceImpl implements LookupService {
      * @throws MentorMeException if any other error occurred during operation
      */
     public List<UserRole> getUserRoles() throws MentorMeException {
-        return userRoleRepository.findAll();
+        List<UserRole> list = new ArrayList<>();
+        userRoleRepository.findAll().forEach(list::add);
+        return list;
     }
 }
 

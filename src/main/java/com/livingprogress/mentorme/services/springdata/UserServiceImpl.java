@@ -11,9 +11,9 @@ import com.livingprogress.mentorme.exceptions.MentorMeException;
 import com.livingprogress.mentorme.security.TokenHandler;
 import com.livingprogress.mentorme.services.UserService;
 import com.livingprogress.mentorme.utils.Helper;
+import com.livingprogress.mentorme.utils.springdata.extensions.DocumentDbSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -92,7 +92,7 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
      * @return the specification
      * @throws MentorMeException if any other error occurred during operation
      */
-    protected Specification<User> getSpecification(UserSearchCriteria criteria) throws MentorMeException {
+    protected DocumentDbSpecification<User> getSpecification(UserSearchCriteria criteria) throws MentorMeException {
         return new UserSpecification(criteria);
     }
 
@@ -134,27 +134,12 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
      * @throws MentorMeException if any other error occurred during operation
      */
     @Transactional
-    public User update(long id, User entity) throws MentorMeException {
+    public User update(String id, User entity) throws MentorMeException {
         User existing = super.checkUpdate(id, entity);
         if (Helper.isUpdated(existing, entity)) {
             return getRepository().save(existing);
         }
         return existing;
-    }
-
-    /**
-     * This method is used to get the user by provider id and provider user id.
-     *
-     * @param providerId the provider id
-     * @param providerUserId the provider user id
-     * @return the match user
-     * @throws IllegalArgumentException if parameters are null or not valid
-     * @throws MentorMeException if any other error occurred during operation
-     */
-    public User findByProviderIdAndProviderUserId(String providerId, String providerUserId) throws MentorMeException {
-        Helper.checkNullOrEmpty(providerId, "providerId");
-        Helper.checkNullOrEmpty(providerUserId, "providerUserId");
-        return userRepository.findByProviderIdAndProviderUserId(providerId, providerUserId);
     }
 
     /**
@@ -168,8 +153,8 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
      * @throws MentorMeException if any other error occurred during operation
      */
     @Transactional
-    public ForgotPassword forgotPassword(long userId) throws MentorMeException {
-        Helper.checkPositive(userId, "userId");
+    public ForgotPassword forgotPassword(String userId) throws MentorMeException {
+        Helper.checkNullOrEmpty(userId, "userId");
         long count = forgotPasswordRepository.countByUserId(userId);
         if (count > forgotPasswordMaxTimes) {
             throw new AccessDeniedException("Reach max times to send forgot password request!");

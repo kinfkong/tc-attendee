@@ -1,4 +1,4 @@
-package com.livingprogress.mentorme.entities;
+package com.livingprogress.mentorme.utils.springdata.extensions;
 
 
 import lombok.Getter;
@@ -11,10 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Paging {
-    /**
-     * The page number.
-     */
-    private int pageNumber;
+
+    private String requestContinuation;
 
     /**
      * The page size.

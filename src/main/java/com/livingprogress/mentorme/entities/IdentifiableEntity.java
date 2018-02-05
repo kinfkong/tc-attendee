@@ -4,11 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import org.springframework.data.annotation.Id;
 
 /**
  * Base identifiable entity.
@@ -16,14 +12,12 @@ import javax.persistence.MappedSuperclass;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@MappedSuperclass
 public abstract class IdentifiableEntity {
     /**
      * The id.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
 
     /**
      * Override the equals method.
@@ -35,7 +29,7 @@ public abstract class IdentifiableEntity {
     public boolean equals(Object target) {
         if (target instanceof IdentifiableEntity) {
             IdentifiableEntity entity = (IdentifiableEntity) target;
-            return entity.getId() == this.id;
+            return entity.getId().equals(this.id);
         }
         return false;
     }
@@ -47,7 +41,7 @@ public abstract class IdentifiableEntity {
      */
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        return id.hashCode();
     }
 }
 

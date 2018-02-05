@@ -13,17 +13,6 @@ import com.livingprogress.mentorme.exceptions.MentorMeException;
  */
 public interface UserService extends GenericService<User, UserSearchCriteria> {
     /**
-     * This method is used to get the user by provider id and provider user id.
-     *
-     * @param providerId the provider id
-     * @param providerUserId the provider user id
-     * @return the match user
-     * @throws IllegalArgumentException if parameters are null or not valid
-     * @throws MentorMeException if any other error occurred during operation
-     */
-    User findByProviderIdAndProviderUserId(String providerId, String providerUserId) throws MentorMeException;
-
-    /**
      * This method is used to create the forgot password entity for the given user.
      *
      * @param userId the user id.
@@ -33,7 +22,7 @@ public interface UserService extends GenericService<User, UserSearchCriteria> {
      * @throws AccessDeniedException if does not allow to perform action
      * @throws MentorMeException if any other error occurred during operation
      */
-    ForgotPassword forgotPassword(long userId) throws MentorMeException;
+    ForgotPassword forgotPassword(String userId) throws MentorMeException;
 
     /**
      * This method is used to update the forgot password entity for the given token.

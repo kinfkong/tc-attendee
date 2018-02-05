@@ -1,12 +1,12 @@
 package com.livingprogress.mentorme.services.springdata;
 
 import com.livingprogress.mentorme.entities.ForgotPassword;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.livingprogress.mentorme.utils.springdata.extensions.DocumentDbSpecificationExecutor;
 
 /**
  * The ForgotPassword repository.
  */
-public interface ForgotPasswordRepository extends JpaRepository<ForgotPassword, Long> {
+public interface ForgotPasswordRepository extends DocumentDbSpecificationExecutor<ForgotPassword, String> {
     /**
      * This method is used to get the ForgotPassword by token.
      * @param token the reset password token
@@ -19,13 +19,13 @@ public interface ForgotPasswordRepository extends JpaRepository<ForgotPassword, 
      * @param userId the user id.
      * @return the count of forgot password entities by user id.
      */
-    long countByUserId(long userId);
+    long countByUserId(String userId);
 
 
     /**
      * Delete all forgot passwords by user id.
      * @param userId the user id.
      */
-    void deleteByUserId(long userId);
+    void deleteByUserId(String userId);
 }
 

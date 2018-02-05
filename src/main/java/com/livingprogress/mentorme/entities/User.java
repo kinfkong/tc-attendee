@@ -3,25 +3,24 @@ package com.livingprogress.mentorme.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Enumerated;
+import javax.persistence.Transient;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 import static javax.persistence.EnumType.STRING;
-import static javax.persistence.FetchType.EAGER;
-import static javax.persistence.InheritanceType.JOINED;
 
 /**
  * The user.
  */
 @Getter
 @Setter
-@Entity
-@Inheritance(strategy = JOINED)
+@Document(collection = "user")
 public class User extends AuditableEntity {
     /**
      * The password (hashed).
@@ -39,25 +38,8 @@ public class User extends AuditableEntity {
      */
     private String lastName;
 
-    /**
-     * The provider id.
-     */
-    @JsonIgnore
-    private String providerId;
+    private String fullName;
 
-    /**
-     * The provider user id.
-     */
-    @JsonIgnore
-    private String providerUserId;
-
-    /**
-     * The user roles.
-     */
-    @ManyToMany(fetch = EAGER)
-    @JoinTable(name = "user_user_role",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_role_id")})
     private List<UserRole> roles;
 
     /**

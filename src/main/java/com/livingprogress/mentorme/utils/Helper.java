@@ -97,7 +97,7 @@ public class Helper {
     public static <T extends IdentifiableEntity> void checkEntity(T object, String name)
             throws IllegalArgumentException {
         checkNull(object, name);
-        checkPositive(object.getId(), name + ".id");
+        checkNullOrEmpty(object.getId(), name + ".id");
     }
 
     /**
@@ -362,7 +362,7 @@ public class Helper {
     public static <T extends IdentifiableEntity> Predicate
     buildInPredicate(List<T> val, Predicate pd, Path<?> path, CriteriaBuilder cb) {
         if (val != null && !val.isEmpty()) {
-            List<Long> ids = val.stream().map(IdentifiableEntity::getId).collect(Collectors.toList());
+            List<String> ids = val.stream().map(IdentifiableEntity::getId).collect(Collectors.toList());
             return cb.and(pd, path.in(ids));
         }
         
@@ -490,8 +490,8 @@ public class Helper {
      * @param <T> the entity class
      * @return if of entity if exists otherwise null.
      */
-    public static <T extends IdentifiableEntity> Long getId(T entity) {
-        Long id = null;
+    public static <T extends IdentifiableEntity> String getId(T entity) {
+        String id = null;
         if (entity != null) {
             id = entity.getId();
         }
@@ -541,7 +541,7 @@ public class Helper {
      * @return true if value has been updated.
      */
     public static <T extends IdentifiableEntity> boolean isUpdated(List<T> oldValues, List<T> newValues) {
-        List<Long> oldIds = oldValues == null ? Collections.emptyList()
+        List<String> oldIds = oldValues == null ? Collections.emptyList()
                 : oldValues.stream().map(IdentifiableEntity::getId).collect(Collectors.toList());
         return newValues == null && !oldIds.isEmpty()
                 || newValues != null
@@ -575,7 +575,7 @@ public class Helper {
         if (user != null) {
             Date now = new Date();
             entity.setCreatedOn(now);
-            entity.setLastModifiedOn(now);
+            entity.setUpdatedOn(now);
             entity.setCreatedBy(user.getId());
             entity.setLastModifiedBy(user.getId());
         }
@@ -586,8 +586,8 @@ public class Helper {
      * @param role the role name
      * @return the user id if exist valid user role otherwise null.
      */
-    public static Long getUserRoleId(String role)  {
-        Long id = null;
+    public static String getUserRoleId(String role)  {
+        String id = null;
         User user = getAuthUser();
         if (user != null && user.getRoles().stream().anyMatch(r -> role.equals(r.getValue()))) {
            id = user.getId();
@@ -603,10 +603,10 @@ public class Helper {
      * @throws IllegalArgumentException if id is not positive or entity is null or id of entity is not positive
      * or id of  entity not match id
      */
-    public static <T extends IdentifiableEntity> void checkUpdate(long id, T entity) {
-        checkPositive(id, "id");
+    public static <T extends IdentifiableEntity> void checkUpdate(String id, T entity) {
+        checkNullOrEmpty(id, "id");
         checkNull(entity, "entity");
-        checkPositive(entity.getId(), "entity.id");
+        checkNullOrEmpty(entity.getId(), "entity.id");
         if (entity.getId() != id) {
             throw new IllegalArgumentException(CustomMessageSource.getMessage("update.notSameId.error"));
         }

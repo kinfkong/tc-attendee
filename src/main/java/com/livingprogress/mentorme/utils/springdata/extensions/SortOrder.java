@@ -1,4 +1,4 @@
-package com.livingprogress.mentorme.entities;
+package com.livingprogress.mentorme.utils.springdata.extensions;
 
 
 /**

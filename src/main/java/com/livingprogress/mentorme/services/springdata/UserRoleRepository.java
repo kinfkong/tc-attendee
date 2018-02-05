@@ -1,12 +1,11 @@
 package com.livingprogress.mentorme.services.springdata;
 
 import com.livingprogress.mentorme.entities.UserRole;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import com.livingprogress.mentorme.utils.springdata.extensions.DocumentDbSpecificationExecutor;
 
 /**
  * The UserRole repository.
  */
-public interface UserRoleRepository extends JpaRepository<UserRole, Long>, JpaSpecificationExecutor<UserRole> {
+public interface UserRoleRepository extends DocumentDbSpecificationExecutor<UserRole, String> {
 }
 

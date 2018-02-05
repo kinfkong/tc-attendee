@@ -6,6 +6,7 @@ import com.livingprogress.mentorme.exceptions.ConfigurationException;
 import com.livingprogress.mentorme.services.UserService;
 import com.livingprogress.mentorme.utils.CustomMessageSource;
 import com.livingprogress.mentorme.utils.Helper;
+import com.livingprogress.mentorme.utils.springdata.extensions.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

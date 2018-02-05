@@ -1,8 +1,8 @@
 package com.livingprogress.mentorme.services;
 
 import com.livingprogress.mentorme.entities.IdentifiableEntity;
-import com.livingprogress.mentorme.entities.Paging;
-import com.livingprogress.mentorme.entities.SearchResult;
+import com.livingprogress.mentorme.utils.springdata.extensions.Paging;
+import com.livingprogress.mentorme.utils.springdata.extensions.SearchResult;
 import com.livingprogress.mentorme.exceptions.EntityNotFoundException;
 import com.livingprogress.mentorme.exceptions.MentorMeException;
 
@@ -21,7 +21,7 @@ public interface GenericService<T extends IdentifiableEntity, S> {
      * @throws EntityNotFoundException if the entity does not exist
      * @throws MentorMeException if any other error occurred during operation
      */
-    T get(long id) throws MentorMeException;
+    T get(String id) throws MentorMeException;
 
     /**
      * This method is used to create an entity.
@@ -44,7 +44,7 @@ public interface GenericService<T extends IdentifiableEntity, S> {
      * @throws EntityNotFoundException if the entity does not exist
      * @throws MentorMeException if any other error occurred during operation
      */
-    T update(long id, T entity) throws MentorMeException;
+    T update(String id, T entity) throws MentorMeException;
 
     /**
      * This method is used to delete an entity.
@@ -54,7 +54,7 @@ public interface GenericService<T extends IdentifiableEntity, S> {
      * @throws EntityNotFoundException if the entity does not exist
      * @throws MentorMeException if any other error occurred during operation
      */
-     void delete(long id)throws MentorMeException;
+     void delete(String id)throws MentorMeException;
 
     /**
      * This method is used to search for entities by criteria and paging params.
