@@ -2,7 +2,6 @@ package com.wiproevents.controllers;
 
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.AttendeeException;
-import com.wiproevents.utils.CustomMessageSource;
 import com.wiproevents.utils.Helper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -79,7 +78,7 @@ public abstract class BaseEmailController {
             helper.setText(bodyTemplateEngine.process(emailName, context), true);
             javaMailSender.send(mail);
         } catch (MessagingException | MailException e) {
-            throw new AttendeeException(CustomMessageSource.getMessage("sendEmail.error"), e);
+            throw new AttendeeException("Error to send email", e);
         }
     }
 }

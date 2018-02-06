@@ -5,7 +5,6 @@ import com.wiproevents.entities.IdentifiableEntity;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.EntityNotFoundException;
 import com.wiproevents.exceptions.AttendeeException;
-import com.wiproevents.utils.CustomMessageSource;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationExecutor;
@@ -211,7 +210,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
         Helper.checkNullOrEmpty(id, "id");
         T entity = repository.findOne(id);
         if (entity == null) {
-            throw new EntityNotFoundException(CustomMessageSource.getMessage("entity.notFound.byId", id));
+            throw new EntityNotFoundException(String.format("Entity with ID=%s can not be found", id));
         }
         return entity;
     }

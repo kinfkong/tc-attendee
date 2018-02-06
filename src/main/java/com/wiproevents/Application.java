@@ -1,6 +1,5 @@
 package com.wiproevents;
 
-import com.wiproevents.utils.CustomMessageSource;
 import com.wiproevents.utils.Helper;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.boot.SpringApplication;
@@ -9,7 +8,6 @@ import org.springframework.boot.autoconfigure.web.DefaultErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -108,16 +106,6 @@ public class Application {
                 return errorAttributes;
             }
         };
-    }
-
-    /**
-     * The resource bundle message source bean.
-     * By default it will use AcceptHeaderLocaleResolver.
-     * @return the resource bundle message source bean.
-     */
-    @Bean
-    public ResourceBundleMessageSource messageSource() {
-        return new CustomMessageSource();
     }
 
     @Bean(name = "bodyTemplateEngine")

@@ -3,6 +3,8 @@ package com.wiproevents.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.azure.spring.data.documentdb.core.query.Criteria;
+import com.microsoft.azure.spring.data.documentdb.core.query.Query;
 import com.wiproevents.aop.LogAspect;
 import com.wiproevents.entities.IdentifiableEntity;
 import com.wiproevents.entities.NewPassword;
@@ -22,17 +24,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -81,7 +79,7 @@ public class Helper {
      */
     public static void checkNull(Object object, String name) throws IllegalArgumentException {
         if (object == null) {
-            throw new IllegalArgumentException(CustomMessageSource.getMessage("checkNull.error", name));
+            throw new IllegalArgumentException(String.format("%s should be provided", name));
         }
     }
 
@@ -129,8 +127,7 @@ public class Helper {
      */
     public static void checkNullOrEmpty(String str, String name) throws IllegalArgumentException {
         if (isNullOrEmpty(str)) {
-            throw new IllegalArgumentException(
-                    CustomMessageSource.getMessage("checkNullOrEmpty.error", name));
+            throw new IllegalArgumentException(String.format("%s should be valid string(not null and not empty)", name));
         }
     }
 
@@ -143,7 +140,7 @@ public class Helper {
      */
     public static void checkPositive(long value, String name) {
         if (value <= 0) {
-            throw new IllegalArgumentException(CustomMessageSource.getMessage("checkPositive.error", name));
+            throw new IllegalArgumentException(String.format("%s should be positive", name));
         }
     }
 
@@ -157,7 +154,7 @@ public class Helper {
     public static void checkEmail(String value, String name) {
         checkNullOrEmpty(value, name);
         if (!isEmail(value)) {
-            throw new IllegalArgumentException(CustomMessageSource.getMessage("checkEmail.error", name));
+            throw new IllegalArgumentException(String.format("%s should be valid email address", name));
         }
     }
 
@@ -183,26 +180,10 @@ public class Helper {
      */
     public static void checkConfigNotNull(Object object, String name) {
         if (object == null) {
-            throw new ConfigurationException(CustomMessageSource.getMessage("checkNull.error", name));
+            throw new ConfigurationException(String.format("%s should be provided", name));
         }
     }
 
-    /**
-     * Check if the directory configuration is valid.
-     *
-     * @param path the path
-     * @param name the fullName
-     * @throws ConfigurationException if the configuration is null or empty or valid directory not exist.
-     */
-    public static void checkDirectory(String path, String name) {
-        if (Helper.isNullOrEmpty(path)) {
-            throw new ConfigurationException(CustomMessageSource.getMessage("checkNullOrEmpty.error", name));
-        }
-        File file = new File(path);
-        if (!file.exists() || !file.isDirectory()) {
-            throw new ConfigurationException(CustomMessageSource.getMessage("checkDirectory.error", name));
-        }
-    }
 
     /**
      * Check if the configuration is positive or not.
@@ -213,7 +194,7 @@ public class Helper {
      */
     public static void checkConfigPositive(long value, String name) {
         if (value <= 0) {
-            throw new ConfigurationException(CustomMessageSource.getMessage("checkPositive.error", name));
+            throw new ConfigurationException(String.format("%s should be positive", name));
         }
     }
 
@@ -239,7 +220,7 @@ public class Helper {
      */
     public static void logEntrance(Logger logger, String signature, String[] paramNames, Object[] params) {
         if (logger.isDebugEnabled()) {
-            String msg = CustomMessageSource.getMessage("log.entering", signature) + toString(paramNames, params);
+            String msg = String.format("Entering method %s.", signature) + toString(paramNames, params);
             logger.debug(msg);
         }
     }
@@ -253,9 +234,9 @@ public class Helper {
      */
     public static void logExit(Logger logger, String signature, Object value) {
         if (logger.isDebugEnabled()) {
-            String msg = CustomMessageSource.getMessage("log.exiting", signature);
+            String msg = String.format("Exiting method %s.", signature);
             if (value != null) {
-                msg += CustomMessageSource.getMessage("log.output") + toString(value);
+                msg += "Output parameter :" + toString(value);
             }
             logger.debug(msg);
         }
@@ -271,7 +252,7 @@ public class Helper {
      */
     public static <T extends Throwable> void logException(Logger logger, String signature, T ex) {
         StringBuilder sw = new StringBuilder();
-        sw.append(CustomMessageSource.getMessage("log.error", signature)).append(": ").append(ex.getMessage());
+        sw.append(String.format("Error in method %s. Details:", signature)).append(": ").append(ex.getMessage());
         logger.error(sw.toString(), ex);
     }
 
@@ -283,7 +264,7 @@ public class Helper {
      * @return the string
      */
     private static String toString(String[] paramNames, Object[] params) {
-        StringBuilder sb = new StringBuilder(CustomMessageSource.getMessage("log.input"));
+        StringBuilder sb = new StringBuilder("Input parameters:");
         sb.append("{");
         if (params != null) {
             for (int i = 0; i < params.length; i++) {
@@ -315,7 +296,7 @@ public class Helper {
             Helper.logException(LogAspect.LOGGER, "com.wiproevents.utils"
                     + ".Helper#toString", e);
             
-            result = CustomMessageSource.getMessage("json.error", e.getMessage());
+            result = "The object can not be serialized by Jackson JSON mapper, error: " + e.toString();
         }
         return result;
     }
@@ -351,137 +332,12 @@ public class Helper {
         return DigestUtils.sha256Hex(token);
     }
 
-    /**
-     * Build predicate to match ids in identifiable entity list.
-     *
-     * @param val the list value
-     * @param pd the predicate
-     * @param path the path
-     * @param cb the criteria builder.
-     * @param <T> the identifiable entity
-     * @return the match predicate
-     */
-    public static <T extends IdentifiableEntity> Predicate
-    buildInPredicate(List<T> val, Predicate pd, Path<?> path, CriteriaBuilder cb) {
-        if (val != null && !val.isEmpty()) {
-            List<String> ids = val.stream().map(IdentifiableEntity::getId).collect(Collectors.toList());
-            return cb.and(pd, path.in(ids));
+    public static Query buildEqualPredict(Query query, Map<String, Object> values, String key, Object value) {
+        if (value != null) {
+            values.put(key, value);
+            query.addCriteria(Criteria.where(key, values));
         }
-        
-        return pd;
-    }
-
-    /**
-     * Build >= predicate.
-     *
-     * @param val the value
-     * @param pd the predicate
-     * @param path the path
-     * @param cb the criteria builder.
-     * @param <Y> the comparable entity
-     * @return the match predicate
-     */
-    public static <Y extends Comparable<? super Y>> Predicate
-    buildGreaterThanOrEqualToPredicate(Y val, Predicate pd, Path<? extends Y> path, CriteriaBuilder cb) {
-        if (val != null) {
-            return cb.and(pd, cb.greaterThanOrEqualTo(path, val));
-        }
-        return pd;
-    }
-
-    /**
-     * Build <= predicate.
-     *
-     * @param val the value
-     * @param pd the predicate
-     * @param path the path
-     * @param cb the criteria builder.
-     * @param <Y> the comparable entity
-     * @return the match predicate
-     */
-    public static <Y extends Comparable<? super Y>> Predicate
-    buildLessThanOrEqualToPredicate(Y val, Predicate pd, Path<? extends Y> path, CriteriaBuilder cb) {
-        if (val != null) {
-            return cb.and(pd, cb.lessThanOrEqualTo(path, val));
-        }
-        return pd;
-    }
-
-    /**
-     * Build equal predicate for object value.
-     *
-     * @param val the value
-     * @param pd the predicate
-     * @param path the path
-     * @param cb the criteria builder.
-     * @return the match predicate
-     */
-    public static Predicate buildEqualPredicate(Object val, Predicate pd, Path<?> path, CriteriaBuilder cb) {
-        if (val != null) {
-            return cb.and(pd, cb.equal(path, val));
-        }
-        return pd;
-    }
-
-    /**
-     * Build equal predicate for string value.
-     *
-     * @param val the value
-     * @param pd the predicate
-     * @param path the path
-     * @param cb the criteria builder.
-     * @return the match predicate
-     */
-    public static Predicate buildEqualPredicate(String val, Predicate pd, Path<?> path, CriteriaBuilder cb) {
-        if (!isNullOrEmpty(val)) {
-            return cb.and(pd, cb.equal(path, val));
-        }
-        return pd;
-    }
-
-    /**
-     * Build like predicate for string value.
-     *
-     * @param val the value
-     * @param pd the predicate
-     * @param path the path
-     * @param cb the criteria builder.
-     * @return the match predicate
-     */
-    public static Predicate buildLikePredicate(String val, Predicate pd, Path<String> path, CriteriaBuilder cb) {
-        if (!isNullOrEmpty(val)) {
-            return cb.and(pd, buildLike(val, path, cb));
-        }
-        return pd;
-    }
-
-    /**
-     * Build like predicate for string value.
-     *
-     * @param val the value
-     * @param path the path
-     * @param cb the criteria builder.
-     * @return the match predicate
-     */
-    public static Predicate buildLike(String val, Path<String> path, CriteriaBuilder cb) {
-        return cb.like(path, "%" + val + "%");
-    }
-
-    /**
-     * Build fullName predicate..
-     *
-     * @param name the fullName
-     * @param pd the predicate
-     * @param root the root
-     * @param cb the criteria builder.
-     * @return the match predicate
-     */
-    public static Predicate buildNamePredicate(String name, Predicate pd, Root<?> root, CriteriaBuilder cb) {
-        if (!isNullOrEmpty(name)) {
-            return cb.and(pd, cb.or(Helper.buildLike(name,
-                    root.get("firstName"), cb), Helper.buildLike(name, root.get("lastName"), cb)));
-        }
-        return pd;
+        return query;
     }
 
 
@@ -594,8 +450,8 @@ public class Helper {
         checkNullOrEmpty(id, "id");
         checkNull(entity, "entity");
         checkNullOrEmpty(entity.getId(), "entity.id");
-        if (entity.getId() != id) {
-            throw new IllegalArgumentException(CustomMessageSource.getMessage("update.notSameId.error"));
+        if (!id.equals(entity.getId())) {
+            throw new IllegalArgumentException("id and id of passed entity should be same");
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.wiproevents.aop;
 
-import com.wiproevents.utils.CustomMessageSource;
 import com.wiproevents.utils.Helper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +40,7 @@ public class LogAspect {
         if (parameterNames == null) {
             parameterNames = new String[joinPoint.getArgs().length];
             for (int i = 0; i < joinPoint.getArgs().length; i++) {
-                parameterNames[i] = CustomMessageSource.getMessage("log.arg") + i;
+                parameterNames[i] = "arg" + i;
             }
         }
         Helper.logEntrance(LOGGER, joinPoint.getSignature()

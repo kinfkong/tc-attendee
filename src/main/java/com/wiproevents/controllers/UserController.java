@@ -6,7 +6,6 @@ import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.EntityNotFoundException;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.UserService;
-import com.wiproevents.utils.CustomMessageSource;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.Paging;
 import com.wiproevents.utils.springdata.extensions.SearchResult;
@@ -138,7 +137,7 @@ public class UserController extends BaseEmailController {
         criteria.setEmail(email);
         SearchResult<User> users = userService.search(criteria, null);
         if (users.getTotal() == 0) {
-            throw new EntityNotFoundException(CustomMessageSource.getMessage("user.notFound.byEmail", email));
+            throw new EntityNotFoundException(String.format("No user found with email %s", email));
         }
         User user = users.getEntities().get(0);
         String userId = user.getId();

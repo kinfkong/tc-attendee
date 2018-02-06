@@ -6,7 +6,7 @@ import com.wiproevents.entities.UserRole;
 import com.wiproevents.entities.UserStatus;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.services.UserService;
-import com.wiproevents.utils.CustomMessageSource;
+
 import com.wiproevents.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,19 +55,18 @@ public class SimpleUserDetailsService implements UserDetailsService {
         try {
             User user = userService.getUserByEmail(email);
             if (user == null) {
-                throw new UsernameNotFoundException(
-                        CustomMessageSource.getMessage("user.notFound.byUsername", email));
+                throw new UsernameNotFoundException(String.format("No user found with username %s", email));
             }
             if (user.getRoles() == null || user.getRoles().isEmpty()) {
                 throw new UsernameNotFoundException(
-                        CustomMessageSource.getMessage("user.noRoles.error", email));
+                        String.format("The user with fullName %s does not have roles defined", email));
             }
             List<GrantedAuthority> authorities = buildUserAuthority(user.getRoles());
             return buildUserForAuthentication(user, authorities);
         } catch (UsernameNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            throw new UsernameNotFoundException(CustomMessageSource.getMessage("loadUserByUsername.error"), e);
+            throw new UsernameNotFoundException("Failed to get user data", e);
         }
     }
 
