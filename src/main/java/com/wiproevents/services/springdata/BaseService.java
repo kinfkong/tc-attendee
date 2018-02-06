@@ -83,11 +83,12 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
     @Transactional
     public T create(T entity) throws AttendeeException {
         Helper.checkNull(entity, "entity");
-        handleNestedProperties(entity);
         if (entity.getId() == null) {
             // auto generate the id
             entity.setId(UUID.randomUUID().toString());
         }
+
+        handleNestedProperties(entity, true);
 
         if (entity instanceof AuditableEntity) {
             AuditableEntity auditableEntity = (AuditableEntity) entity;
@@ -128,7 +129,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
     @Transactional
     public T update(String id, T entity) throws AttendeeException {
         T existing = checkUpdate(id, entity);
-        handleNestedProperties(entity);
+        handleNestedProperties(entity, false);
         if (entity instanceof AuditableEntity) {
             AuditableEntity auditableEntity = (AuditableEntity) entity;
             auditableEntity.setCreatedOn(((AuditableEntity) existing).getCreatedOn());
@@ -163,12 +164,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      * @throws AttendeeException if any other error occurred during operation
      */
     public SearchResult<T> search(S criteria, Paging paging) throws AttendeeException {
-
-        if (paging != null && paging.getPageSize() != 0) {
-            return specificationExecutor.fxndAll(getSpecification(criteria), paging);
-        }
-
-        return specificationExecutor.fxndAll(getSpecification(criteria), null);
+        return specificationExecutor.findAll(getSpecification(criteria), paging);
     }
 
     /**
@@ -180,7 +176,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      * @throws AttendeeException if any other error occurred during operation
      */
     public long count(S criteria) throws AttendeeException {
-        return specificationExecutor.cxuntAll(getSpecification(criteria));
+        return specificationExecutor.countAll(getSpecification(criteria));
     }
 
 
@@ -198,9 +194,10 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      * This method is used to handle nested properties.
      *
      * @param entity the entity
+     * @param isCreate
      * @throws AttendeeException if any error occurred during operation
      */
-    protected void handleNestedProperties(T entity) throws AttendeeException { }
+    protected void handleNestedProperties(T entity, boolean isCreate) throws AttendeeException { }
 
     /**
      * Check whether an identifiable entity with a given id exists.

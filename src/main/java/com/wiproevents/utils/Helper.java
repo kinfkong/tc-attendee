@@ -10,6 +10,7 @@ import com.wiproevents.entities.User;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.security.CustomUserDetails;
 import com.wiproevents.security.UserAuthentication;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,7 @@ public class Helper {
             .featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();
 
     /**
-     * Represents the utf8 encoding name.
+     * Represents the utf8 encoding fullName.
      */
     public static final String UTF8 = "UTF-8";
 
@@ -75,7 +76,7 @@ public class Helper {
      * It checks whether a given object is null.
      *
      * @param object the object to be checked
-     * @param name the name of the object, used in the exception message
+     * @param name the fullName of the object, used in the exception message
      * @throws IllegalArgumentException the exception thrown when the object is null
      */
     public static void checkNull(Object object, String name) throws IllegalArgumentException {
@@ -88,7 +89,7 @@ public class Helper {
      * It checks whether a given identifiable entity is valid.
      *
      * @param object the object to be checked
-     * @param name the name of the object, used in the exception message
+     * @param name the fullName of the object, used in the exception message
      * @param <T> the entity class
      * @throws IllegalArgumentException the exception thrown when the object is null or id of object is not positive
      */
@@ -123,7 +124,7 @@ public class Helper {
      * It checks whether a given string is null or empty.
      *
      * @param str the string to be checked
-     * @param name the name of the string, used in the exception message
+     * @param name the fullName of the string, used in the exception message
      * @throws IllegalArgumentException the exception thrown when the given string is null or empty
      */
     public static void checkNullOrEmpty(String str, String name) throws IllegalArgumentException {
@@ -137,7 +138,7 @@ public class Helper {
      * Check if the value is positive.
      *
      * @param value the value to be checked
-     * @param name the name of the value, used in the exception message
+     * @param name the fullName of the value, used in the exception message
      * @throws IllegalArgumentException if the value is not positive
      */
     public static void checkPositive(long value, String name) {
@@ -150,7 +151,7 @@ public class Helper {
      * Check if the value is valid email.
      *
      * @param value the value to be checked
-     * @param name the name of the value, used in the exception message
+     * @param name the fullName of the value, used in the exception message
      * @throws IllegalArgumentException if the value is not email
      */
     public static void checkEmail(String value, String name) {
@@ -177,7 +178,7 @@ public class Helper {
      * Check if the configuration is null or not.
      *
      * @param object the object
-     * @param name the name
+     * @param name the fullName
      * @throws ConfigurationException if the configuration is null
      */
     public static void checkConfigNotNull(Object object, String name) {
@@ -190,7 +191,7 @@ public class Helper {
      * Check if the directory configuration is valid.
      *
      * @param path the path
-     * @param name the name
+     * @param name the fullName
      * @throws ConfigurationException if the configuration is null or empty or valid directory not exist.
      */
     public static void checkDirectory(String path, String name) {
@@ -207,7 +208,7 @@ public class Helper {
      * Check if the configuration is positive or not.
      *
      * @param value the configuration  value
-     * @param name the name
+     * @param name the fullName
      * @throws ConfigurationException if the configuration value is  not positive
      */
     public static void checkConfigPositive(long value, String name) {
@@ -346,6 +347,9 @@ public class Helper {
         return user;
     }
 
+    public static String encodeToken(String token) {
+        return DigestUtils.sha256Hex(token);
+    }
 
     /**
      * Build predicate to match ids in identifiable entity list.
@@ -464,9 +468,9 @@ public class Helper {
     }
 
     /**
-     * Build name predicate..
+     * Build fullName predicate..
      *
-     * @param name the name
+     * @param name the fullName
      * @param pd the predicate
      * @param root the root
      * @param cb the criteria builder.
@@ -566,13 +570,13 @@ public class Helper {
 
     /**
      * Get user id match given role .
-     * @param role the role name
+     * @param role the role fullName
      * @return the user id if exist valid user role otherwise null.
      */
     public static String getUserRoleId(String role)  {
         String id = null;
         User user = getAuthUser();
-        if (user != null && user.getRoles().stream().anyMatch(r -> role.equals(r.getValue()))) {
+        if (user != null && user.getRoles().stream().anyMatch(r -> role.equals(r.getName()))) {
            id = user.getId();
         }
         return id;

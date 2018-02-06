@@ -11,9 +11,9 @@ import lombok.Setter;
 @Setter
 public class UserSearchCriteria {
     /**
-     * The name.
+     * The fullName.
      */
-    private String name;
+    private String fullName;
 
     /**
      * The email.

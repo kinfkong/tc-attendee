@@ -1,8 +1,10 @@
 package com.wiproevents.services.springdata;
 
+import com.wiproevents.entities.Country;
+import com.wiproevents.entities.Designation;
 import com.wiproevents.entities.UserRole;
-import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.AttendeeException;
+import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.services.LookupService;
 import com.wiproevents.utils.Helper;
 import lombok.NoArgsConstructor;
@@ -26,6 +28,12 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
+    @Autowired
+    private DesignationRepository designationRepository;
+
+    @Autowired
+    private CountryRepository countryRepository;
+
     /**
      * Check if all required fields are initialized properly.
      *
@@ -45,6 +53,20 @@ public class LookupServiceImpl implements LookupService {
     public List<UserRole> getUserRoles() throws AttendeeException {
         List<UserRole> list = new ArrayList<>();
         userRoleRepository.findAll().forEach(list::add);
+        return list;
+    }
+
+    @Override
+    public List<Designation> getDesignations() throws AttendeeException {
+        List<Designation> list = new ArrayList<>();
+        designationRepository.findAll().forEach(list::add);
+        return list;
+    }
+
+    @Override
+    public List<Country> getCountries() throws AttendeeException {
+        List<Country> list = new ArrayList<>();
+        countryRepository.findAll().forEach(list::add);
         return list;
     }
 }

@@ -62,10 +62,10 @@ public abstract class BaseEmailController {
     }
 
     /**
-     * Send email with to email address, email name and model params.
+     * Send email with to email address, email fullName and model params.
      *
      * @param toEmail   the to email address.
-     * @param emailName the email name.
+     * @param emailName the email fullName.
      * @param context     the model params.
      * @throws AttendeeException throws if error to send email.
      */

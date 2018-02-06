@@ -22,8 +22,8 @@ public class CustomMessageSource extends ResourceBundleMessageSource {
 
     /**
      * Get message.
-     * @param name the message name.
-     * @return the match message by name
+     * @param name the message fullName.
+     * @return the match message by fullName
      */
     public static String getMessage(String name) {
         return ACCESSOR.getMessage(name);
@@ -31,9 +31,9 @@ public class CustomMessageSource extends ResourceBundleMessageSource {
 
     /**
      * Get message with arguments.
-     * @param name the message name.
+     * @param name the message fullName.
      * @param args the message arguments
-     * @return the match message by name
+     * @return the match message by fullName
      */
     public static String getMessage(String name, Object...args) {
         return ACCESSOR.getMessage(name, args);

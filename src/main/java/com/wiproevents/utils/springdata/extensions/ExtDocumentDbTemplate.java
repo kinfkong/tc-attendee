@@ -55,7 +55,6 @@ public class ExtDocumentDbTemplate extends DocumentDbTemplate implements ExtDocu
         FeedResponse<Document> q = documentDbFactory.getDocumentClient()
                 .queryDocuments(collections.get(0).getSelfLink(),
                         sqlQuerySpec, feedOptions);
-
         Iterator<Document> queryIterator = q.getQueryIterable().iterator();
         int aggregateCount = 0;
         while (queryIterator.hasNext()) {

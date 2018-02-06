@@ -2,6 +2,7 @@ package com.wiproevents.security;
 
 import com.wiproevents.entities.User;
 import com.wiproevents.exceptions.ConfigurationException;
+import com.wiproevents.services.UserService;
 import com.wiproevents.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,8 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.DatatypeConverter;
 
 /**
  * The token auth service.
@@ -19,14 +18,15 @@ import javax.xml.bind.DatatypeConverter;
 @Service
 public class TokenAuthenticationService {
     /**
-     * The token auth header name.
+     * The token auth header fullName.
      */
-    private static final String AUTH_HEADER_NAME = "X-AUTH-TOKEN";
+    private static final String AUTH_HEADER_NAME = "Authorization";
 
     /**
-     * The auth cookie name.
+     * The auth cookie fullName.
      */
-    private static final String AUTH_COOKIE_NAME = "AUTH-TOKEN";
+    private static final String AUTH_COOKIE_NAME = "AUTH-ACCESS-TOKEN";
+
     /**
      * The token expires in milliseconds for 10 days.
      */
@@ -36,16 +36,14 @@ public class TokenAuthenticationService {
     /**
      * The token handler.
      */
-    private final TokenHandler tokenHandler;
+    @Autowired
+    private UserService userService;
 
     /**
      * The token auth service constructor.
-     *
-     * @param secret the secret
      */
-    @Autowired
-    private TokenAuthenticationService(@Value("${token.secret}") String secret) {
-        tokenHandler = new TokenHandler(DatatypeConverter.parseBase64Binary(secret));
+    public TokenAuthenticationService() {
+
     }
 
     /**
@@ -55,24 +53,8 @@ public class TokenAuthenticationService {
      */
     @PostConstruct
     protected void checkConfiguration() {
-        Helper.checkConfigNotNull(tokenHandler, "tokenHandler");
+        Helper.checkConfigNotNull(userService, "tokenHandler");
         Helper.checkConfigPositive(tokenExpirationTimeInMillis, "tokenExpirationTimeInMillis");
-    }
-
-    /**
-     * Add authentication.
-     *
-     * @param response the servlet response.
-     * @param authentication the user auth object.
-     */
-    public void addAuthentication(HttpServletResponse response, UserAuthentication authentication) {
-        final User user = (User) authentication.getDetails();
-        user.setExpires(System.currentTimeMillis() + tokenExpirationTimeInMillis);
-        final String token = tokenHandler.createTokenForUser(user);
-        // Put the token into a cookie because the client can't capture response
-        // headers of redirects / full page reloads.
-        // (Its reloaded as a result of this response triggering a redirect back to "/")
-        response.addCookie(createCookieForToken(token));
     }
 
 
@@ -83,11 +65,10 @@ public class TokenAuthenticationService {
      * @return the user auth request.
      */
     public UserAuthentication getAuthentication(HttpServletRequest request) {
-        // to prevent CSRF attacks we still only allow authentication using a custom HTTP header
-        // (it is up to the client to read our previously set cookie and put it in the header)
-        final String token = request.getHeader(AUTH_HEADER_NAME);
-        if (token != null) {
-            final User user = tokenHandler.parseUserFromToken(token);
+        final String tokenString = request.getHeader(AUTH_HEADER_NAME);
+        if (tokenString != null && tokenString.split(" ").length > 1) {
+            final String token = tokenString.split(" ")[1];
+            final User user = userService.getUserByAccessToken(token);
             if (user != null) {
                 return new UserAuthentication(user);
             }

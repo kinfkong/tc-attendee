@@ -7,6 +7,7 @@ import com.microsoft.azure.spring.data.documentdb.repository.support.SimpleDocum
 import org.springframework.context.ApplicationContext;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 
 /**
  * Created by wangjinggang on 2018/2/5.
@@ -24,16 +25,18 @@ public class DocumentDbSpecificationExecutorImpl<T, ID extends Serializable> ext
     }
 
     @Override
-    public SearchResult<T> fxndAll(DocumentDbSpecification<T> spec, Paging paging) {
+    public SearchResult<T> findAll(DocumentDbSpecification<T> spec, Paging paging) {
         Query q = new Query();
-        return documentDbOperations.find(spec.toQuery(q), entityInformation.getJavaType(),
+        LinkedHashMap<String, Object> values = new LinkedHashMap<>();
+        return documentDbOperations.find(spec.toQuery(q, values), entityInformation.getJavaType(),
                 entityInformation.getCollectionName(), paging);
     }
 
     @Override
-    public long cxuntAll(DocumentDbSpecification<T> spec) {
+    public long countAll(DocumentDbSpecification<T> spec) {
         Query q = new Query();
-        return documentDbOperations.count(spec.toQuery(q), entityInformation.getJavaType(),
+        LinkedHashMap<String, Object> values = new LinkedHashMap<>();
+        return documentDbOperations.count(spec.toQuery(q, values), entityInformation.getJavaType(),
                 entityInformation.getCollectionName());
     }
 }

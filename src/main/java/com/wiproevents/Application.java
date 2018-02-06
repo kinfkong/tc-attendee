@@ -20,7 +20,6 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
-import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -105,9 +104,6 @@ public class Application {
                     errorAttributes.clear();
                     errorAttributes.put("code", status);
                     errorAttributes.put("message", message);
-                    errorAttributes.put("timestamp", new Date());
-                    errorAttributes.put("error", "my-error");
-                    errorAttributes.put("status", "123");
                 }
                 return errorAttributes;
             }

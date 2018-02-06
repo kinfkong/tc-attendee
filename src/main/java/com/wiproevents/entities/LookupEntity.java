@@ -15,6 +15,6 @@ public abstract class LookupEntity extends IdentifiableEntity {
     /**
      * The lookup value.
      */
-    private String value;
+    private String name;
 }
 

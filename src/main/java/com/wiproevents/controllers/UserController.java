@@ -6,7 +6,6 @@ import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.EntityNotFoundException;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.UserService;
-import com.wiproevents.services.springdata.TmpUserRepository;
 import com.wiproevents.utils.CustomMessageSource;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.Paging;
@@ -32,10 +31,6 @@ public class UserController extends BaseEmailController {
      */
     @Autowired
     private UserService userService;
-
-
-    @Autowired
-    private TmpUserRepository tmpUserRepository;
 
     /**
      * Check if all required fields are initialized properly.
@@ -124,12 +119,7 @@ public class UserController extends BaseEmailController {
         return userService.search(criteria, paging);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "me")
-    public TmpUser getMe() throws AttendeeException {
-        System.out.println("executing getMe");
-        return tmpUserRepository.findOne("test@test.com", "testLastName");
-        // return userService.getMe();
-    }
+
 
     /**
      * This method is used to start the forgot password process.

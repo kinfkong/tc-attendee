@@ -8,8 +8,6 @@ import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.services.UserService;
 import com.wiproevents.utils.CustomMessageSource;
 import com.wiproevents.utils.Helper;
-import com.wiproevents.utils.springdata.extensions.SearchResult;
-import com.wiproevents.entities.UserSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -55,19 +53,12 @@ public class SimpleUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         try {
-            UserSearchCriteria criteria = new UserSearchCriteria();
-            criteria.setEmail(email);
-            SearchResult<User> users =
-                    userService.search(criteria, null);
-            if (users.getEntities()
-                     .isEmpty()) {
+            User user = userService.getUserByEmail(email);
+            if (user == null) {
                 throw new UsernameNotFoundException(
                         CustomMessageSource.getMessage("user.notFound.byUsername", email));
             }
-            User user = users.getEntities()
-                             .get(0);
-            if (user.getRoles()
-                    .isEmpty()) {
+            if (user.getRoles() == null || user.getRoles().isEmpty()) {
                 throw new UsernameNotFoundException(
                         CustomMessageSource.getMessage("user.noRoles.error", email));
             }
@@ -89,7 +80,7 @@ public class SimpleUserDetailsService implements UserDetailsService {
     private List<GrantedAuthority> buildUserAuthority(List<UserRole> roles) {
         Set<GrantedAuthority> auths = new HashSet<>();
         for (UserRole role : roles) {
-            auths.add(new SimpleGrantedAuthority(role.getValue()));
+            auths.add(new SimpleGrantedAuthority(role.getName()));
         }
         return new ArrayList<>(auths);
     }

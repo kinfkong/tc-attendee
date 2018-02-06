@@ -1,8 +1,10 @@
 package com.wiproevents.controllers;
 
+import com.wiproevents.entities.Country;
+import com.wiproevents.entities.Designation;
 import com.wiproevents.entities.UserRole;
-import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.AttendeeException;
+import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.services.LookupService;
 import com.wiproevents.utils.Helper;
 import lombok.NoArgsConstructor;
@@ -49,5 +51,14 @@ public class LookupController {
         return lookupService.getUserRoles();
     }
 
+    @RequestMapping(value = "/designations", method = RequestMethod.GET)
+    public List<Designation> getDesignations() throws AttendeeException {
+        return lookupService.getDesignations();
+    }
+
+    @RequestMapping(value = "/countries", method = RequestMethod.GET)
+    public List<Country> getCountries() throws AttendeeException {
+        return lookupService.getCountries();
+    }
 }
 

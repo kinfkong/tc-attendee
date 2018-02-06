@@ -42,7 +42,7 @@ public class UserAuthentication implements Authentication {
         List<UserRole> roles = user.getRoles();
         if (roles != null) {
             for (UserRole role : roles) {
-                auths.add(new SimpleGrantedAuthority(role.getValue()));
+                auths.add(new SimpleGrantedAuthority(role.getName()));
             }
         }
         return new ArrayList<>(auths);
@@ -100,7 +100,7 @@ public class UserAuthentication implements Authentication {
     }
 
     /**
-     * Get user name.
+     * Get user fullName.
      *
      * @return the username.
      */

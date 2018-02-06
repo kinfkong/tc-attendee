@@ -1,5 +1,7 @@
 package com.wiproevents.services;
 
+import com.wiproevents.entities.Country;
+import com.wiproevents.entities.Designation;
 import com.wiproevents.entities.UserRole;
 import com.wiproevents.exceptions.AttendeeException;
 
@@ -16,5 +18,9 @@ public interface LookupService {
      * @throws AttendeeException if any other error occurred during operation
      */
    List<UserRole> getUserRoles() throws AttendeeException;
+
+   List<Designation> getDesignations() throws AttendeeException;
+
+    List<Country> getCountries() throws AttendeeException;
 }
 

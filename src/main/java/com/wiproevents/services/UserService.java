@@ -48,5 +48,9 @@ public interface UserService extends GenericService<User, UserSearchCriteria> {
      * @return the token.
      */
     String createTokenForUser(User user);
+
+    User getUserByAccessToken(String accessToken);
+
+    User getUserByEmail(String email) throws AttendeeException;
 }
 

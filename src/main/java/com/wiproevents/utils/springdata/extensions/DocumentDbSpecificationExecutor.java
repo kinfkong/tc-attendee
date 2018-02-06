@@ -17,7 +17,7 @@ public interface DocumentDbSpecificationExecutor<T, ID extends Serializable> ext
      * @param paging
      * @return
      */
-    SearchResult<T> fxndAll(DocumentDbSpecification<T> spec, Paging paging);
+    SearchResult<T> findAll(DocumentDbSpecification<T> spec, Paging paging);
 
     /**
      * Returns the number of instances that the given {@link DocumentDbSpecification} will return.
@@ -25,5 +25,5 @@ public interface DocumentDbSpecificationExecutor<T, ID extends Serializable> ext
      * @param spec the {@link DocumentDbSpecification} to count instances for
      * @return the number of instances
      */
-    long cxuntAll(DocumentDbSpecification<T> spec);
+    long countAll(DocumentDbSpecification<T> spec);
 }

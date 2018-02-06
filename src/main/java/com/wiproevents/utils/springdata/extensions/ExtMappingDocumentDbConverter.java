@@ -48,6 +48,8 @@ public class ExtMappingDocumentDbConverter extends MappingDocumentDbConverter {
                 Object value = accessor.getProperty(entityInformation.getPersistentProperty(field.getName()));
                 if (value instanceof Date) {
                     value = ((Date) value).getTime();
+                } else if (value != null && value.getClass().isEnum()) {
+                    value = value.toString();
                 }
                 targetDocument.set(field.getName(), value);
             }

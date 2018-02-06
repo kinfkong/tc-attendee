@@ -26,7 +26,7 @@ public class LogAspect {
             + "|| execution(* com.wiproevents.security.SimpleUserDetailsService.*(..))";
 
     /**
-     * The logger with package name.
+     * The logger with package fullName.
      */
     public static final Logger LOGGER = LogManager.getLogger("com.wiproevents");
 

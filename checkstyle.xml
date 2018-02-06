@@ -36,14 +36,14 @@
         names will be relative to the specified directory. See
         http://checkstyle.sourceforge.net/5.x/config.html#Checker
 
-        <property name="basedir" value="${basedir}"/>
+        <property fullName="basedir" value="${basedir}"/>
     -->
 
     <property name="fileExtensions" value="java, properties, xml"/>
 
     <!-- Checks that a package-info.java file exists for each package.     -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html#JavadocPackage -->
-    <!--<module name="JavadocPackage"/> -->
+    <!--<module fullName="JavadocPackage"/> -->
 
     <!-- Checks whether files end with a new line.                        -->
     <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
@@ -72,9 +72,9 @@
 
     <!-- Checks for Headers                                -->
     <!-- See http://checkstyle.sf.net/config_header.html   -->
-    <!-- <module name="Header"> -->
-    <!--   <property name="headerFile" value="${checkstyle.header.file}"/> -->
-    <!--   <property name="fileExtensions" value="java"/> -->
+    <!-- <module fullName="Header"> -->
+    <!--   <property fullName="headerFile" value="${checkstyle.header.file}"/> -->
+    <!--   <property fullName="fileExtensions" value="java"/> -->
     <!-- </module> -->
 
     <module name="TreeWalker">
@@ -149,21 +149,21 @@
 
         <!-- Checks for common coding problems               -->
         <!-- See http://checkstyle.sf.net/config_coding.html -->
-        <!--<module name="AvoidInlineConditionals"/> -->
+        <!--<module fullName="AvoidInlineConditionals"/> -->
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
         <module name="HiddenField"/>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <!--<module name="MagicNumber"/> -->
+        <!--<module fullName="MagicNumber"/> -->
         <module name="MissingSwitchDefault"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 
         <!-- Checks for class design                         -->
         <!-- See http://checkstyle.sf.net/config_design.html -->
-        <!-- <module name="DesignForExtension"/> -->
-        <!-- <module name="FinalClass"/> -->
+        <!-- <module fullName="DesignForExtension"/> -->
+        <!-- <module fullName="FinalClass"/> -->
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>
@@ -171,7 +171,7 @@
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
-       <!-- <module name="FinalParameters"/> -->
+       <!-- <module fullName="FinalParameters"/> -->
         <module name="TodoComment"/>
         <module name="UpperEll"/>
 

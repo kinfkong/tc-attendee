@@ -1,14 +1,10 @@
 package com.wiproevents.services.springdata;
 
-import com.wiproevents.entities.ForgotPassword;
-import com.wiproevents.entities.NewPassword;
-import com.wiproevents.entities.User;
-import com.wiproevents.entities.UserSearchCriteria;
+import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.AccessDeniedException;
+import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.EntityNotFoundException;
-import com.wiproevents.exceptions.AttendeeException;
-import com.wiproevents.security.TokenHandler;
 import com.wiproevents.services.UserService;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
@@ -18,8 +14,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import javax.xml.bind.DatatypeConverter;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -46,10 +42,6 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     @Value("${token.expirationTimeInMillis}")
     private long tokenExpirationTimeInMillis;
 
-    /**
-     * The token handler.
-     */
-    private final TokenHandler tokenHandler;
 
     /**
      * The forgot password repository for CRUD operations. Should be non-null after injection.
@@ -64,8 +56,13 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     private UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(@Value("${token.secret}") String secret) {
-        tokenHandler = new TokenHandler(DatatypeConverter.parseBase64Binary(secret));
+    private AccessTokenRepository accessTokenRepository;
+
+    @Autowired
+    private UserPreferenceRepository userPreferenceRepository;
+
+    @Autowired
+    public UserServiceImpl() {
     }
 
     /**
@@ -81,7 +78,6 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
         Helper.checkConfigPositive(forgotPasswordExpirationTimeInMillis,
                 "forgotPasswordExpirationTimeInMillis");
         Helper.checkConfigPositive(forgotPasswordMaxTimes, "forgotPasswordMaxTimes");
-        Helper.checkConfigNotNull(tokenHandler, "tokenHandler");
         Helper.checkConfigPositive(tokenExpirationTimeInMillis, "tokenExpirationTimeInMillis");
     }
 
@@ -100,12 +96,13 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
      * This method is used to handle nested properties.
      *
      * @param entity the entity
+     * @param isCreate
      * @throws IllegalArgumentException if entity is invalid
      * @throws AttendeeException if any error occurred during operation
      */
     @Override
-    protected void handleNestedProperties(User entity) throws AttendeeException {
-        super.handleNestedProperties(entity);
+    protected void handleNestedProperties(User entity, boolean isCreate) throws AttendeeException {
+        super.handleNestedProperties(entity, isCreate);
     }
 
     /**
@@ -119,7 +116,24 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     @Transactional
     public User create(User entity) throws AttendeeException {
         Helper.encodePassword(entity, false);
-        return super.create(entity);
+        // check unique of the email
+        if (entity.getEmail() != null) {
+            List<User> user = userRepository.findByEmail(entity.getEmail());
+            if (!user.isEmpty()) {
+                throw new IllegalArgumentException("The email has been registered.");
+            }
+        }
+
+        User result = super.create(entity);
+
+        // create the user preference for the new user
+        UserPreference userPreference = new UserPreference();
+        userPreference.setUserId(result.getId());
+
+        // save the user preference
+        userPreferenceRepository.save(userPreference);
+
+        return result;
     }
 
     /**
@@ -218,8 +232,52 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     @Override
     public String createTokenForUser(User user) {
         long expires = System.currentTimeMillis() + tokenExpirationTimeInMillis;
-        user.setExpires(expires);
-        return tokenHandler.createTokenForUser(user);
+
+        AccessToken token = new AccessToken();
+
+        token.setUpdatedOn(new Date());
+        token.setCreatedOn(new Date());
+        token.setUserId(user.getId());
+        token.setExpires(new Date(expires));
+
+        String tokenString = UUID.randomUUID().toString();
+        String hashedToken = Helper.encodeToken(tokenString);
+
+        // hash the token to store in db
+        token.setToken(hashedToken);
+
+        // save the token to db
+        accessTokenRepository.save(token);
+
+        return tokenString;
+    }
+
+    @Override
+    public User getUserByAccessToken(String accessToken){
+        String hashedToken = Helper.encodeToken(accessToken);
+
+        List<AccessToken> tokens = accessTokenRepository.findByToken(hashedToken);
+        if (tokens.size() == 0) {
+            return null;
+        }
+
+        AccessToken token = tokens.get(0);
+        if (token.getExpires().getTime() < new Date().getTime()) {
+            // the access token has been expires
+            return null;
+        }
+
+        // get by the id of the user
+        return userRepository.findOne(token.getUserId());
+    }
+
+    @Override
+    public User getUserByEmail(String email) throws AttendeeException {
+        List<User> users = userRepository.findByEmail(email);
+        if (users.size() == 0) {
+            return null;
+        }
+        return users.get(0);
     }
 }
 
