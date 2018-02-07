@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 @Document(collection = "event_category")
 public class EventCategory extends LookupEntity {
-    private EventCategoryLogo logo;
+    private FileEntity logo;
 }

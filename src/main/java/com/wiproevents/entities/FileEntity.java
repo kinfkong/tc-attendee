@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class EventCategoryLogo extends IdentifiableEntity {
+public class FileEntity extends IdentifiableEntity {
     private String name;
     private String fileURL;
 }

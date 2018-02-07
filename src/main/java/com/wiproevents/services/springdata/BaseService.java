@@ -1,23 +1,27 @@
 package com.wiproevents.services.springdata;
 
+import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
+import com.microsoft.azure.spring.data.documentdb.repository.DocumentDbRepository;
 import com.wiproevents.entities.AuditableEntity;
 import com.wiproevents.entities.IdentifiableEntity;
+import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.EntityNotFoundException;
-import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationExecutor;
 import com.wiproevents.utils.springdata.extensions.Paging;
 import com.wiproevents.utils.springdata.extensions.SearchResult;
-import com.microsoft.azure.spring.data.documentdb.repository.DocumentDbRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -82,10 +86,6 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
     @Transactional
     public T create(T entity) throws AttendeeException {
         Helper.checkNull(entity, "entity");
-        if (entity.getId() == null) {
-            // auto generate the id
-            entity.setId(UUID.randomUUID().toString());
-        }
 
         handleNestedProperties(entity, true);
 
@@ -196,8 +196,52 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      * @param isCreate
      * @throws AttendeeException if any error occurred during operation
      */
-    protected void handleNestedProperties(T entity, boolean isCreate) throws AttendeeException { }
+    protected void handleNestedProperties(T entity, boolean isCreate) throws AttendeeException {
+        // update the entity / embedded ids
+        if (isCreate && entity.getId() == null) {
+            entity.setId(UUID.randomUUID().toString());
+        }
 
+        // update the id in fields
+        this.assignIds(entity, true);
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private void assignIds(IdentifiableEntity entity, boolean isRoot) {
+        if (!isRoot && entity.getClass().getAnnotation(Document.class) != null) {
+            // only assign ids for embedded type.
+            return;
+        }
+
+        if (entity.getId() == null) {
+            entity.setId(UUID.randomUUID().toString());
+        }
+        // check the sub fields
+        Field[] fields = entity.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (IdentifiableEntity.class.isAssignableFrom(field.getType())) {
+                try {
+                    assignIds((IdentifiableEntity) field.get(entity), false);
+                } catch (IllegalAccessException e) {
+                    // ignore
+                    e.printStackTrace();
+                }
+            } else if (List.class.isAssignableFrom(field.getType())) {
+                ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
+                Class<?> actualType = (Class<?>) stringListType.getActualTypeArguments()[0];
+                if (actualType.isAssignableFrom(IdentifiableEntity.class)) {
+                    try {
+                        List<IdentifiableEntity> list = (List<IdentifiableEntity>) field.get(entity);
+                        list.forEach(item -> assignIds(item, false));
+                    } catch (IllegalAccessException e) {
+                        // ignore
+                    }
+                }
+            }
+        }
+    }
     /**
      * Check whether an identifiable entity with a given id exists.
      *
