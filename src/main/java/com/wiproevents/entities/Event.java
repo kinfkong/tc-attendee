@@ -1,5 +1,6 @@
 package com.wiproevents.entities;
 
+import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Document(collection = "event")
 public class Event extends AuditableUserEntity {
     private boolean template;
     private String name;
@@ -41,7 +43,7 @@ public class Event extends AuditableUserEntity {
     private List<Souvenir> souvenirs = new ArrayList<>();
     private List<TicketOption> ticketOptions = new ArrayList<>();
     private List<PaymentOption> paymentOptions = new ArrayList<>();
-    private List<DayAgenda> dayAgendas = new ArrayList<>();
+    private List<EventDayAgenda> dayAgendas = new ArrayList<>();
     private EventStatus status;
 
 }

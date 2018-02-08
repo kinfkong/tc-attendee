@@ -42,14 +42,18 @@ public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> e
     @Override
     public SearchResult<T> findAll(DocumentDbSpecification<T> spec, Paging paging, Boolean withPopulatedFields) {
         SearchResult<T> result = this.findAll(spec, paging);
-        result.getEntities().forEach(this::populateReference);
+        if (withPopulatedFields) {
+            result.getEntities().forEach(this::populateReference);
+        }
         return result;
     }
 
     @Override
     public T findOne(ID id, Boolean withPopulatedFields) {
         T entity = super.findOne(id);
-        populateReference(entity);
+        if (withPopulatedFields) {
+            populateReference(entity);
+        }
         return entity;
     }
 
@@ -60,15 +64,72 @@ public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> e
             DocumentDbRepository<?, ID> pathRepository = this.nestedRepositories.get(path);
             // get value from the build
             try {
-                Object value = beanUtils.getProperty(entity, path);
+                Object value = getPropertyExt(entity, path);
 
                 Object populatedValue = populateReference(path, value, pathRepository);
 
-                beanUtils.setProperty(entity, path, populatedValue);
+                setPropertyExt(entity, path, populatedValue);
 
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new IllegalStateException("failed to read: " + path + " from class: " + entity.getClass());
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object getPropertyExt(Object entity, String path) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        if (path.startsWith(".")) {
+            path = path.substring(1);
+        }
+        int t = path.indexOf("[*]");
+        if (t >= 0) {
+            String pre = path.substring(0, t);
+            String suf = path.substring(t + "[*]".length());
+            List<Object> result = new ArrayList<>();
+            List<Object> list = (List<Object>) beanUtils.getProperty(entity, pre);
+            if (list == null) {
+                result = null;
+            } else {
+                for (Object item : list) {
+                    result.add(getPropertyExt(item, suf));
+                }
+            }
+            return result;
+        } else {
+            return beanUtils.getProperty(entity, path);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setPropertyExt(Object entity, String path, Object value) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        if (path.startsWith(".")) {
+            path = path.substring(1);
+        }
+        int t = path.indexOf("[*]");
+        if (t >= 0) {
+            if (value != null && !(value instanceof List)) {
+                throw new IllegalStateException("should be a list");
+            }
+            List<Object> vList = (List<Object>) value;
+            String pre = path.substring(0, t);
+            String suf = path.substring(t + "[*]".length());
+            List<Object> list = (List<Object>) beanUtils.getProperty(entity, pre);
+            if (list != null) {
+                if (list.size() != vList.size()) {
+                    throw new IllegalStateException("The list size is not the same");
+                }
+                for (int i = 0; i < list.size(); i++) {
+                    setPropertyExt(list.get(i), suf, vList.get(i));
+                }
+            }
+        } else {
+            if (value != null && !value.getClass().isAssignableFrom(beanUtils.getPropertyType(entity, path))) {
+                Object dest = beanUtils.getProperty(entity, path);
+                beanUtils.copyProperties(dest, value);
+            } else {
+                beanUtils.setProperty(entity, path, value);
+            }
+
         }
     }
 
@@ -103,6 +164,7 @@ public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> e
         if (pathRepository instanceof  DocumentDbSpecificationRepository) {
             DocumentDbSpecificationRepository<?, ID> specificationRepository =
                     (DocumentDbSpecificationRepository<?, ID>) pathRepository;
+
             nestedEntity = specificationRepository.findOne((ID) entityId, true);
         } else {
             nestedEntity = pathRepository.findOne(entityId);

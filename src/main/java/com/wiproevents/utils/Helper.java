@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.spring.data.documentdb.core.query.Criteria;
 import com.microsoft.azure.spring.data.documentdb.core.query.Query;
 import com.wiproevents.aop.LogAspect;
-import com.wiproevents.entities.IdentifiableEntity;
-import com.wiproevents.entities.NewPassword;
-import com.wiproevents.entities.User;
+import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.security.CustomUserDetails;
 import com.wiproevents.security.UserAuthentication;
@@ -27,9 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -417,7 +413,50 @@ public class Helper {
     }
 
     public static boolean isUpdated(Object obj1, Object obj2) {
-        return EqualsBuilder.reflectionEquals(obj1, obj2, "createdOn", "createdBy", "updatedOn", "updatedBy");
+        return !EqualsBuilder.reflectionEquals(obj1, obj2, "createdOn", "createdBy", "updatedOn", "updatedBy");
+    }
+
+    public static void updateAudition(AuditableEntity newEntity, AuditableEntity oldEntity) {
+        if (newEntity == null) {
+            return;
+        }
+
+        if(!isUpdated(newEntity, oldEntity)) {
+            return;
+        }
+
+        if (oldEntity == null) {
+            newEntity.setCreatedOn(new Date());
+            newEntity.setUpdatedOn(new Date());
+        } else {
+            newEntity.setCreatedOn(oldEntity.getCreatedOn());
+            newEntity.setUpdatedOn(new Date());
+        }
+        if (newEntity instanceof AuditableUserEntity) {
+            if (oldEntity == null) {
+                ((AuditableUserEntity) newEntity).setCreatedBy(Helper.getAuthUser().getId());
+                ((AuditableUserEntity) newEntity).setUpdatedBy(Helper.getAuthUser().getId());
+            } else {
+                ((AuditableUserEntity) newEntity).setCreatedBy(((AuditableUserEntity) newEntity).getCreatedBy());
+                ((AuditableUserEntity) newEntity).setUpdatedBy(Helper.getAuthUser().getId());
+            }
+        }
+    }
+
+    public static void updateAudition(List<? extends AuditableEntity> newEntities, List<? extends AuditableEntity> oldEntities) {
+        Map<String, AuditableEntity> mappings = new HashMap<>();
+        if (oldEntities != null) {
+            oldEntities.forEach(item -> mappings.put(item.getId(), item));
+        }
+        if (newEntities != null) {
+            newEntities.forEach(item -> {
+                if (item.getId() != null) {
+                    updateAudition(item, mappings.get(item.getId()));
+                } else {
+                    updateAudition(item, null);
+                }
+            });
+        }
     }
 
 

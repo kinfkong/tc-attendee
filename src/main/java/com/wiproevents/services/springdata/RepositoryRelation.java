@@ -25,10 +25,17 @@ public class RepositoryRelation {
     @Autowired
     private EventCategoryRepository eventCategoryRepository;
 
+    @Autowired
+    private EventDayAgendaRepository eventDayAgendaRepository;
+
+    @Autowired
+    private EventBriefRepository eventBriefRepository;
+
     @PostConstruct
     public void handleRepositoryRelations() {
         handleEventRepository();
         handleEventCategoryRepository();
+        handleEventDayAgendaRepository();
     }
 
     private void handleEventRepository() {
@@ -42,5 +49,10 @@ public class RepositoryRelation {
 
     private void handleEventCategoryRepository() {
         eventCategoryRepository.addNestedRepository("logo", fileEntityRepository);
+    }
+
+    private void handleEventDayAgendaRepository() {
+        eventDayAgendaRepository.addNestedRepository("breaks[*].mapImage", fileEntityRepository);
+        eventDayAgendaRepository.addNestedRepository("event", eventBriefRepository);
     }
 }

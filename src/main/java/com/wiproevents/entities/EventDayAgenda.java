@@ -1,5 +1,6 @@
 package com.wiproevents.entities;
 
+import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,8 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class DayAgenda extends AuditableUserEntity {
+@Document(collection = "day_agenda")
+public class EventDayAgenda extends AuditableUserEntity {
     private EventBrief event;
     private int day;
     private List<Session> sessions = new ArrayList<>();
