@@ -13,6 +13,7 @@ import java.util.Date;
 @Setter
 public class SessionSearchCriteria extends BaseSearchCriteria {
     private String name;
+    private String dayAgendaId;
     private Date startDateBefore;
     private Date startDateAfter;
     private Date endDateBefore;

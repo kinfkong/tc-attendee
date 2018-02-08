@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 public class Session extends AuditableUserEntity {
     private EventBrief event;
+    private String dayAgendaId;
     private String name;
     private String venue;
     private String building;
@@ -28,7 +29,5 @@ public class Session extends AuditableUserEntity {
     private List<Speaker> addedSpeakers = new ArrayList<>();
     private List<FileEntity> galleryImages = new ArrayList<>();
     private List<SessionFile> files = new ArrayList<>();
-    private List<SessionFeedbackSurvey> feedbackSurvey = new ArrayList<>();
     private SessionStatus status;
-
 }

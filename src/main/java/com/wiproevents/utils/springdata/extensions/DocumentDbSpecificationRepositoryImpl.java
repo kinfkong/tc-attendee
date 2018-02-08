@@ -123,7 +123,7 @@ public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> e
                 }
             }
         } else {
-            if (value != null && !value.getClass().isAssignableFrom(beanUtils.getPropertyType(entity, path))) {
+            if (value != null && !beanUtils.getPropertyType(entity, path).isAssignableFrom(value.getClass())) {
                 Object dest = beanUtils.getProperty(entity, path);
                 beanUtils.copyProperties(dest, value);
             } else {

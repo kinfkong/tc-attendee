@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class SessionFile extends IdentifiableEntity {
+public class SessionFile implements Model {
     private List<FileEntity> files = new ArrayList<>();
-    private SessionFileCategory category;
+    private FileCategory category;
 }

@@ -4,6 +4,7 @@ import com.wiproevents.entities.Session;
 import com.wiproevents.entities.SessionSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.SessionService;
+import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import org.springframework.stereotype.Service;
 
@@ -19,5 +20,16 @@ public class SessionServiceImpl extends BaseService<Session, SessionSearchCriter
         return new SessionSpecification(criteria);
     }
 
+    @Override
+    protected void handleNestedCreate(Session entity) throws AttendeeException {
+        super.handleNestedCreate(entity);
+        Helper.updateAudition(entity.getAddedSpeakers(), null);
+    }
+
+    @Override
+    protected void handleNestedUpdate(Session entity, Session oldEntity) throws AttendeeException {
+        super.handleNestedUpdate(entity, oldEntity);
+        Helper.updateAudition(entity.getAddedSpeakers(), oldEntity.getAddedSpeakers());
+    }
 }
 

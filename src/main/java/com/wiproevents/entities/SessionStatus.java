@@ -7,11 +7,11 @@ public enum SessionStatus {
     /**
      * Active InstitutionStatus.
      */
-    ACTIVE,
+    Active,
 
     /**
      * Inactive InstitutionStatus.
      */
-    INACTIVE;
+    Inactive;
 }
 
