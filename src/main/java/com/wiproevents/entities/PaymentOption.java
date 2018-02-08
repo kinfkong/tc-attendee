@@ -8,5 +8,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class PaymentOption extends LookupEntity {
+public class PaymentOption {
+    private String name;
 }

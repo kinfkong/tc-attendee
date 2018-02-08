@@ -1,12 +1,12 @@
 package com.wiproevents.services.springdata;
 
 import com.wiproevents.entities.ForgotPassword;
-import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationExecutor;
+import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationRepository;
 
 /**
  * The ForgotPassword repository.
  */
-public interface ForgotPasswordRepository extends DocumentDbSpecificationExecutor<ForgotPassword, String> {
+public interface ForgotPasswordRepository extends DocumentDbSpecificationRepository<ForgotPassword, String> {
     /**
      * This method is used to get the ForgotPassword by token.
      * @param token the reset password token

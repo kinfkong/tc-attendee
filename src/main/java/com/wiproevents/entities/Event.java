@@ -16,12 +16,21 @@ public class Event extends AuditableUserEntity {
     private boolean template;
     private String name;
     private String description;
+
     private Date startDate;
+
     private Date endDate;
+
+    private Date registrationStartDate;
+
     private Date registrationEndDate;
+
     private Location location;
+
     private List<EventInvitation> invitations = new ArrayList<>();
+
     private List<FileEntity> galleryImages = new ArrayList<>();
+
     private boolean splashScreenRequired;
     private FileEntity splashScreenFile;
     private FileEntity imageThumbnailFile;

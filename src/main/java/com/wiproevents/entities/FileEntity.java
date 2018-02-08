@@ -1,5 +1,6 @@
 package com.wiproevents.entities;
 
+import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Document(collection = "file")
 public class FileEntity extends IdentifiableEntity {
     private String name;
     private String fileURL;

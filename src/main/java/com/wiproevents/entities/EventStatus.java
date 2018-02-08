@@ -5,5 +5,5 @@ package com.wiproevents.entities;
  */
 
 public enum EventStatus {
-    SAVED,
+    Saved,
 }

@@ -14,6 +14,6 @@ import java.util.List;
 public class DayAgenda extends AuditableUserEntity {
     private EventBrief event;
     private int day;
-    private List<EventSession> sessions = new ArrayList<>();
+    private List<Session> sessions = new ArrayList<>();
     private List<AgendaBreak> breaks = new ArrayList<>();
 }

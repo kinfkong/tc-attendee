@@ -8,6 +8,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class EventSessionFileCategory extends LookupEntity {
+public class SessionFileCategory extends LookupEntity {
 
 }

@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class Souvenir extends IdentifiableEntity {
+public class Souvenir {
     private String name;
     private String description;
     private List<String> options = new ArrayList<>();

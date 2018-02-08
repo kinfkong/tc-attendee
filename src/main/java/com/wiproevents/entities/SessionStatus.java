@@ -3,7 +3,7 @@ package com.wiproevents.entities;
 /**
  * The Institution status.
  */
-public enum EventSessionStatus {
+public enum SessionStatus {
     /**
      * Active InstitutionStatus.
      */

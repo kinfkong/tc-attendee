@@ -18,5 +18,4 @@ public class AgendaBreak extends AuditableUserEntity {
     private FileEntity mapImage;
     private Date startTime;
     private Date endTime;
-
 }

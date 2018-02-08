@@ -52,4 +52,5 @@ public class AppConfiguration extends AbstractDocumentDbConfiguration {
     public MappingDocumentDbConverter mappingDocumentDbConverter() throws Exception {
         return new ExtMappingDocumentDbConverter(this.documentDbMappingContext());
     }
+
 }

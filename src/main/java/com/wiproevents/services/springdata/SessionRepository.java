@@ -1,6 +1,6 @@
 package com.wiproevents.services.springdata;
 
-import com.wiproevents.entities.EventType;
+import com.wiproevents.entities.Session;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
  * The User repository.
  */
 @Repository
-public interface EventTypeRepository extends DocumentDbSpecificationRepository<EventType, String> {
+public interface SessionRepository extends DocumentDbSpecificationRepository<Session, String> {
+
 }
 

@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class EventSessionFile extends IdentifiableEntity {
+public class SessionFile extends IdentifiableEntity {
     private List<FileEntity> files = new ArrayList<>();
-    private EventSessionFileCategory category;
+    private SessionFileCategory category;
 }

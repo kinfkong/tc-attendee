@@ -9,13 +9,16 @@ import org.springframework.data.repository.core.RepositoryMetadata;
  * Created by wangjinggang on 2018/2/5.
  */
 public class ExtDocumentDbRepositoryFactory extends DocumentDbRepositoryFactory {
+    private final ApplicationContext applicationContext;
+
     public ExtDocumentDbRepositoryFactory(DocumentDbOperations dbOperations, ApplicationContext applicationContext) {
         super(dbOperations, applicationContext);
+        this.applicationContext = applicationContext;
     }
 
     @Override
     protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
-        return DocumentDbSpecificationExecutorImpl.class;
+        return DocumentDbSpecificationRepositoryImpl.class;
     }
 
 }

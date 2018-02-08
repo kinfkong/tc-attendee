@@ -1,14 +1,14 @@
 package com.wiproevents.services.springdata;
 
 import com.wiproevents.entities.Event;
-import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationExecutor;
+import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationRepository;
 import org.springframework.stereotype.Repository;
 
 /**
  * The User repository.
  */
 @Repository
-public interface EventRepository extends DocumentDbSpecificationExecutor<Event, String> {
+public interface EventRepository extends DocumentDbSpecificationRepository<Event, String> {
 
 }
 

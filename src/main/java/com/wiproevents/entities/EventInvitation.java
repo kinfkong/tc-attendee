@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class EventInvitation extends IdentifiableEntity {
+public class EventInvitation {
     private String eventId;
     private String name;
     private String email;

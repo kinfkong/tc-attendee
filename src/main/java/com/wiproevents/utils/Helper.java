@@ -13,6 +13,7 @@ import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.security.CustomUserDetails;
 import com.wiproevents.security.UserAuthentication;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +27,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 /**
@@ -356,28 +354,6 @@ public class Helper {
         return id;
     }
 
-    /**
-     * Check whether value has been updated.
-     *
-     * @param oldValue the old value
-     * @param newValue the new value.
-     * @return true if value has been updated.
-     */
-    public static boolean isUpdated(Object oldValue, Object newValue) {
-        return (oldValue != null && !oldValue.equals(newValue)) || (newValue != null && !newValue.equals(oldValue));
-    }
-
-    /**
-     * Check whether BigDecimal value has been updated.
-     *
-     * @param oldValue the old value
-     * @param newValue the new value.
-     * @return true if value has been updated.
-     */
-    public static boolean isUpdated(BigDecimal oldValue, BigDecimal newValue) {
-        return (oldValue != null && (newValue == null || oldValue.compareTo(newValue) != 0))
-                || (newValue != null && (oldValue == null || newValue.compareTo(oldValue) != 0));
-    }
 
     /**
      * Check whether both values is null.
@@ -390,21 +366,6 @@ public class Helper {
         return oldValue == null && newValue == null;
     }
 
-    /**
-     * Check whether identifiable entity list has been updated.
-     *
-     * @param oldValues the old values
-     * @param newValues the new values.
-     * @param <T> the entity class
-     * @return true if value has been updated.
-     */
-    public static <T extends IdentifiableEntity> boolean isUpdated(List<T> oldValues, List<T> newValues) {
-        List<String> oldIds = oldValues == null ? Collections.emptyList()
-                : oldValues.stream().map(IdentifiableEntity::getId).collect(Collectors.toList());
-        return newValues == null && !oldIds.isEmpty()
-                || newValues != null
-                && (oldIds.size() != newValues.size() || newValues.stream().anyMatch(a -> !oldIds.contains(a.getId())));
-    }
 
     /**
      * Get user from authentication.
@@ -454,4 +415,10 @@ public class Helper {
             throw new IllegalArgumentException("id and id of passed entity should be same");
         }
     }
+
+    public static boolean isUpdated(Object obj1, Object obj2) {
+        return EqualsBuilder.reflectionEquals(obj1, obj2, "createdOn", "createdBy", "updatedOn", "updatedBy");
+    }
+
+
 }

@@ -11,16 +11,11 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class EventSearchCriteria extends BaseSearchCriteria {
+public class SessionSearchCriteria extends BaseSearchCriteria {
     private String name;
-    private Integer durationDays;
     private Date startDateBefore;
     private Date startDateAfter;
     private Date endDateBefore;
     private Date endDateAfter;
-    private Date registrationStartDateBefore;
-    private Date registrationStartDateAfter;
-    private Date registrationEndDateBefore;
-    private Date registrationEndDateAfter;
 }
 

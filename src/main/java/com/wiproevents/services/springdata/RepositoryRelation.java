@@ -1,0 +1,46 @@
+package com.wiproevents.services.springdata;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+
+/**
+ * Created by wangjinggang on 2018/2/8.
+ */
+@Component
+public class RepositoryRelation {
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private CountryRepository countryRepository;
+
+    @Autowired
+    private FileEntityRepository fileEntityRepository;
+
+    @Autowired
+    private EventTypeRepository eventTypeRepository;
+
+    @Autowired
+    private EventCategoryRepository eventCategoryRepository;
+
+    @PostConstruct
+    public void handleRepositoryRelations() {
+        handleEventRepository();
+        handleEventCategoryRepository();
+    }
+
+    private void handleEventRepository() {
+        eventRepository.addNestedRepository("location.country", countryRepository);
+        eventRepository.addNestedRepository("galleryImages", fileEntityRepository);
+        eventRepository.addNestedRepository("splashScreenFile", fileEntityRepository);
+        eventRepository.addNestedRepository("imageThumbnailFile", fileEntityRepository);
+        eventRepository.addNestedRepository("type", eventTypeRepository);
+        eventRepository.addNestedRepository("category", eventCategoryRepository);
+    }
+
+    private void handleEventCategoryRepository() {
+        eventCategoryRepository.addNestedRepository("logo", fileEntityRepository);
+    }
+}

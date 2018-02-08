@@ -15,11 +15,11 @@ public abstract class AuditableUserEntity extends AuditableEntity {
     /**
      * The created by.
      */
-    private long createdBy;
+    private String createdBy;
 
     /**
      * The last modified by.
      */
-    private long updatedBy;
+    private String updatedBy;
 }
 

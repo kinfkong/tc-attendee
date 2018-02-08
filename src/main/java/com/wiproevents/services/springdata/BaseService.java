@@ -3,26 +3,24 @@ package com.wiproevents.services.springdata;
 import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
 import com.microsoft.azure.spring.data.documentdb.repository.DocumentDbRepository;
 import com.wiproevents.entities.AuditableEntity;
+import com.wiproevents.entities.AuditableUserEntity;
 import com.wiproevents.entities.IdentifiableEntity;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.EntityNotFoundException;
 import com.wiproevents.utils.Helper;
-import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
-import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationExecutor;
-import com.wiproevents.utils.springdata.extensions.Paging;
-import com.wiproevents.utils.springdata.extensions.SearchResult;
+import com.wiproevents.utils.springdata.extensions.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -40,17 +38,13 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
     public static final String ID = "id";
 
     /**
-     * The repository for CRUD operations. Should be non-null after injection.
-     */
-    @Autowired
-    @Getter(value = PROTECTED)
-    private DocumentDbRepository<T, String> repository;
-
-    /**
      * The specification executor. Should be non-null after injection.
      */
     @Autowired
-    private DocumentDbSpecificationExecutor<T, String> specificationExecutor;
+    @Getter(value = PROTECTED)
+    private DocumentDbSpecificationRepository<T, String> repository;
+
+    private PropertyUtilsBean beanUtils = new PropertyUtilsBean();
 
     /**
      * Check if all required fields are initialized properly.
@@ -87,16 +81,37 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
     public T create(T entity) throws AttendeeException {
         Helper.checkNull(entity, "entity");
 
-        handleNestedProperties(entity, true);
+        // assign id
+        if (entity.getId() != null) {
+            throw new IllegalArgumentException("You cannot assign the id on create.");
+        }
+
+        entity.setId(UUID.randomUUID().toString());
+
+        handleNestedValidation(entity);
+
+        handleNestedCreate(entity);
 
         if (entity instanceof AuditableEntity) {
             AuditableEntity auditableEntity = (AuditableEntity) entity;
             Date now = new Date();
             auditableEntity.setCreatedOn(new Date());
             auditableEntity.setUpdatedOn(now);
+
+            if (entity instanceof AuditableUserEntity) {
+                AuditableUserEntity auditableUserEntity = (AuditableUserEntity) entity;
+                auditableUserEntity.setCreatedBy(Helper.getAuthUser().getId());
+                auditableUserEntity.setUpdatedBy(Helper.getAuthUser().getId());
+            }
+
         }
-        return repository.save(entity);
+
+        T obj = repository.save(entity);
+
+        // retrieve with populations
+        return this.get(obj.getId());
     }
+
 
     /**
      * This method is used to delete an entity.
@@ -128,12 +143,22 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
     @Transactional
     public T update(String id, T entity) throws AttendeeException {
         T existing = checkUpdate(id, entity);
-        handleNestedProperties(entity, false);
+        handleNestedValidation(entity);
+        handleNestedUpdate(entity, existing);
+
         if (entity instanceof AuditableEntity) {
             AuditableEntity auditableEntity = (AuditableEntity) entity;
             auditableEntity.setCreatedOn(((AuditableEntity) existing).getCreatedOn());
             auditableEntity.setUpdatedOn(new Date());
+
+            if (entity instanceof AuditableUserEntity) {
+                AuditableUserEntity auditableUserEntity = (AuditableUserEntity) entity;
+
+                auditableUserEntity.setCreatedBy(((AuditableUserEntity) existing).getCreatedBy());
+                auditableUserEntity.setUpdatedBy(Helper.getAuthUser().getId());
+            }
         }
+
         return repository.save(entity);
     }
 
@@ -163,7 +188,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      * @throws AttendeeException if any other error occurred during operation
      */
     public SearchResult<T> search(S criteria, Paging paging) throws AttendeeException {
-        return specificationExecutor.findAll(getSpecification(criteria), paging);
+        return repository.findAll(getSpecification(criteria), paging);
     }
 
     /**
@@ -175,7 +200,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      * @throws AttendeeException if any other error occurred during operation
      */
     public long count(S criteria) throws AttendeeException {
-        return specificationExecutor.countAll(getSpecification(criteria));
+        return repository.countAll(getSpecification(criteria));
     }
 
 
@@ -189,22 +214,66 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      */
     protected abstract DocumentDbSpecification<T> getSpecification(S criteria) throws AttendeeException;
 
-    /**
-     * This method is used to handle nested properties.
-     *
-     * @param entity the entity
-     * @param isCreate
-     * @throws AttendeeException if any error occurred during operation
-     */
-    protected void handleNestedProperties(T entity, boolean isCreate) throws AttendeeException {
-        // update the entity / embedded ids
-        if (isCreate && entity.getId() == null) {
-            entity.setId(UUID.randomUUID().toString());
+
+    protected Map<String, DocumentDbRepository<?, String>> getNestedRepositories() {
+        Map<String, DocumentDbRepository<?, String>> result = new HashMap<>();
+        return result;
+    }
+
+    protected void handleNestedUpdate(T entity, T oldEntity) throws AttendeeException {
+
+    }
+
+    protected void handleNestedCreate(T entity) throws AttendeeException {
+
+    }
+
+    protected  void handleNestedValidation(T entity) throws AttendeeException {
+        Map<String, DocumentDbRepository<?, String>> repositories = getNestedRepositories();
+        for (String path : repositories.keySet()) {
+            DocumentDbRepository<?, String> pathRepository = repositories.get(path);
+            // get value from the build
+            try {
+                Object value = beanUtils.getProperty(entity, path);
+
+                validateReference(path, value, pathRepository);
+
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new AttendeeException("failed to read: " + path + " from class: " + entity.getClass());
+            }
+        }
+    }
+
+    protected void validateReference(String path, Object value, DocumentDbRepository<?, String> pathRepository) throws AttendeeException {
+        if (value == null) {
+            return;
+        }
+        if (value instanceof List) {
+            for (Object v : (List<?>) value) {
+                validateReference(path, v, pathRepository);
+            }
+            return;
         }
 
-        // update the id in fields
-        this.assignIds(entity, true);
+        if (!(value instanceof IdentifiableEntity)) {
+            throw new AttendeeException(
+                    "The class: " + value.getClass() + " of path: " + path + " is not IdentifiableEntity");
+        }
 
+        IdentifiableEntity v = (IdentifiableEntity) value;
+        String entityId = v.getId();
+
+        if (entityId == null) {
+            throw new IllegalArgumentException(
+                    "The class: " + value.getClass() + " of path:  " + path + " id cannot be null.");
+        }
+
+        // check existence
+        Object nestedEntity = pathRepository.findOne(entityId);
+        if (nestedEntity == null) {
+            throw new IllegalArgumentException(
+                    "The id " + entityId + " in path: " + path + " cannot find entity.");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -252,7 +321,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      */
     private T ensureEntityExist(String id) throws EntityNotFoundException {
         Helper.checkNullOrEmpty(id, "id");
-        T entity = repository.findOne(id);
+        T entity = repository.findOne(id, true);
         if (entity == null) {
             throw new EntityNotFoundException(String.format("Entity with ID=%s can not be found", id));
         }

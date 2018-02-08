@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class EventSessionFeedbackSurvey extends IdentifiableEntity {
+public class SessionFeedbackSurvey extends IdentifiableEntity {
     private String name;
     private String description;
     private String context;
