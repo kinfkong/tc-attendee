@@ -190,4 +190,9 @@ public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> e
     public void addNestedRepository(String path, DocumentDbRepository<?, ID> repository) {
         this.nestedRepositories.put(path, repository);
     }
+
+    @Override
+    public Map<String, DocumentDbRepository<?, ID>> getNestedRepositories() {
+        return this.nestedRepositories;
+    }
 }

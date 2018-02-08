@@ -66,7 +66,9 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      * @throws AttendeeException if any other error occurred during operation
      */
     public T get(String id) throws AttendeeException {
-        return ensureEntityExist(id);
+        T entity = ensureEntityExist(id);
+        handlePopulate(entity);
+        return entity;
     }
 
     /**
@@ -188,7 +190,11 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      * @throws AttendeeException if any other error occurred during operation
      */
     public SearchResult<T> search(S criteria, Paging paging) throws AttendeeException {
-        return repository.findAll(getSpecification(criteria), paging);
+        SearchResult<T> result = repository.findAll(getSpecification(criteria), paging);
+        for (T item : result.getEntities()) {
+            handlePopulate(item);
+        }
+        return result;
     }
 
     /**
@@ -215,10 +221,6 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
     protected abstract DocumentDbSpecification<T> getSpecification(S criteria) throws AttendeeException;
 
 
-    protected Map<String, DocumentDbRepository<?, String>> getNestedRepositories() {
-        Map<String, DocumentDbRepository<?, String>> result = new HashMap<>();
-        return result;
-    }
 
     protected void handleNestedUpdate(T entity, T oldEntity) throws AttendeeException {
 
@@ -228,8 +230,12 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
 
     }
 
+    protected  void handlePopulate(T entity) throws AttendeeException {
+
+    }
+
     protected  void handleNestedValidation(T entity) throws AttendeeException {
-        Map<String, DocumentDbRepository<?, String>> repositories = getNestedRepositories();
+        Map<String, DocumentDbRepository<?, String>> repositories = repository.getNestedRepositories();
         for (String path : repositories.keySet()) {
             DocumentDbRepository<?, String> pathRepository = repositories.get(path);
             // get value from the build

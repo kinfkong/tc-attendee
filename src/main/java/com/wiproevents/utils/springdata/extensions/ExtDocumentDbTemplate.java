@@ -116,13 +116,16 @@ public class ExtDocumentDbTemplate extends DocumentDbTemplate implements ExtDocu
         return "dbs/" + databaseName;
     }
 
+    private static String normalizeParamName(String param) {
+        return param.replace(".", "_");
+    }
     private static SqlQuerySpec createSqlQuerySpec(Query query, Paging paging) {
         String queryStr = "SELECT * FROM ROOT r WHERE 1=1";
         final SqlParameterCollection parameterCollection = new SqlParameterCollection();
 
         for (final Map.Entry<String, Object> entry : query.getCriteria().entrySet()) {
-            queryStr += " AND r." + entry.getKey() + "=@" + entry.getKey();
-            parameterCollection.add(new SqlParameter("@" + entry.getKey(), entry.getValue()));
+            queryStr += " AND r." + entry.getKey() + "=@" + normalizeParamName(entry.getKey());
+            parameterCollection.add(new SqlParameter("@" + normalizeParamName(entry.getKey()), entry.getValue()));
         }
         if (paging != null && paging.getSortColumn() != null) {
             SortOrder sortOrder = paging.getSortOrder();
@@ -141,8 +144,8 @@ public class ExtDocumentDbTemplate extends DocumentDbTemplate implements ExtDocu
         final SqlParameterCollection parameterCollection = new SqlParameterCollection();
 
         for (final Map.Entry<String, Object> entry : query.getCriteria().entrySet()) {
-            queryStr += " AND r." + entry.getKey() + "=@" + entry.getKey();
-            parameterCollection.add(new SqlParameter("@" + entry.getKey(), entry.getValue()));
+            queryStr += " AND r." + entry.getKey() + "=@" + normalizeParamName(entry.getKey());
+            parameterCollection.add(new SqlParameter("@" + normalizeParamName(entry.getKey()), entry.getValue()));
         }
 
         System.out.println("queryStr: " + queryStr);

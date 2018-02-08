@@ -4,6 +4,7 @@ import com.microsoft.azure.spring.data.documentdb.repository.DocumentDbRepositor
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Created by wangjinggang on 2018/2/5.
@@ -32,4 +33,5 @@ public interface DocumentDbSpecificationRepository<T, ID extends Serializable> e
     long countAll(DocumentDbSpecification<T> spec);
 
     void addNestedRepository(String path, DocumentDbRepository<?, ID> repository);
+    Map<String, DocumentDbRepository<?, ID>> getNestedRepositories();
 }

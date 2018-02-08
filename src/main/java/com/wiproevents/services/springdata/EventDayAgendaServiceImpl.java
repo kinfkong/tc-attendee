@@ -47,16 +47,14 @@ public class EventDayAgendaServiceImpl extends BaseService<EventDayAgenda, Event
     }
 
     @Override
-    public EventDayAgenda get(String id) throws AttendeeException {
-        EventDayAgenda result = super.get(id);
+    protected void handlePopulate(EventDayAgenda entity) throws AttendeeException {
+        super.handlePopulate(entity);
 
         // populate the sessions
         SessionSearchCriteria criteria = new SessionSearchCriteria();
-        criteria.setDayAgendaId(result.getId());
+        criteria.setDayAgendaId(entity.getId());
         SearchResult<Session> sessionResult = sessionService.search(criteria, null);
-        result.setSessions(sessionResult.getEntities());
-
-        return result;
+        entity.setSessions(sessionResult.getEntities());
     }
 }
 

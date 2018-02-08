@@ -1,20 +1,16 @@
 package com.wiproevents.services.springdata;
 
-import com.microsoft.azure.spring.data.documentdb.repository.DocumentDbRepository;
-import com.wiproevents.entities.Event;
-import com.wiproevents.entities.EventInvitation;
-import com.wiproevents.entities.EventSearchCriteria;
-import com.wiproevents.entities.Location;
+import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.AttendeeException;
+import com.wiproevents.services.EventDayAgendaService;
 import com.wiproevents.services.EventService;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
+import com.wiproevents.utils.springdata.extensions.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The Spring Data JPA implementation of UserService,
@@ -24,17 +20,7 @@ import java.util.Map;
 public class EventServiceImpl extends BaseService<Event, EventSearchCriteria> implements EventService {
 
     @Autowired
-    private CountryRepository countryRepository;
-
-    @Autowired
-    private FileEntityRepository fileEntityRepository;
-
-    @Autowired
-    private EventTypeRepository eventTypeRepository;
-
-    @Autowired
-    private EventCategoryRepository eventCategoryRepository;
-
+    private EventDayAgendaService dayAgendaService;
 
 
     /**
@@ -48,18 +34,17 @@ public class EventServiceImpl extends BaseService<Event, EventSearchCriteria> im
         return new EventSpecification(criteria);
     }
 
-    @Override
-    protected Map<String, DocumentDbRepository<?, String>> getNestedRepositories() {
-        Map<String, DocumentDbRepository<?, String>> result = new HashMap<>();
-        result.put("location.country", countryRepository);
-        result.put("galleryImages", fileEntityRepository);
-        result.put("splashScreenFile", fileEntityRepository);
-        result.put("imageThumbnailFile", fileEntityRepository);
-        result.put("type", eventTypeRepository);
-        result.put("category", eventCategoryRepository);
-        return result;
-    }
 
+    @Override
+    protected void handlePopulate(Event entity) throws AttendeeException {
+        super.handlePopulate(entity);
+
+        EventDayAgendaSearchCriteria criteria = new EventDayAgendaSearchCriteria();
+        criteria.setEventId(entity.getId());
+        SearchResult<EventDayAgenda> dayAgendaResult = dayAgendaService.search(criteria, null);
+        entity.setDayAgendas(dayAgendaResult.getEntities());
+
+    }
 
     @Override
     protected void handleNestedUpdate(Event entity, Event oldEntity) throws AttendeeException {

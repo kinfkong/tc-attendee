@@ -10,6 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EventDayAgendaSearchCriteria extends BaseSearchCriteria {
-
+    private String eventId;
 }
 
