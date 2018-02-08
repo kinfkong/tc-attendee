@@ -8,6 +8,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class PaymentOption {
+public class PaymentOption implements Model {
     private String name;
 }

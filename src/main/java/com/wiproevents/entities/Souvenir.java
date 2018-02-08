@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class Souvenir {
+public class Souvenir implements Model {
     private String name;
     private String description;
     private List<String> options = new ArrayList<>();

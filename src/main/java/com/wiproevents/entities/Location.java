@@ -10,7 +10,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class Location {
+public class Location implements Model {
     private String name;
     private Country country;
     private String state;

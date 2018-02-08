@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class TicketOption {
+public class TicketOption implements Model  {
     private String name;
     private Double price;
     private Double quota;

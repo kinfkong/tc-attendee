@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class EventInvitation {
+public class EventInvitation implements Model {
     private String eventId;
     private String name;
     private String email;

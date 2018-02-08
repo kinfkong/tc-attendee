@@ -5,6 +5,8 @@ import com.microsoft.azure.spring.data.documentdb.core.convert.MappingDocumentDb
 import com.microsoft.azure.spring.data.documentdb.core.mapping.DocumentDbPersistentEntity;
 import com.microsoft.azure.spring.data.documentdb.core.mapping.DocumentDbPersistentProperty;
 import com.wiproevents.entities.IdentifiableEntity;
+import com.wiproevents.entities.Model;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.mapping.PersistentPropertyAccessor;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
@@ -76,6 +78,24 @@ public class ExtMappingDocumentDbConverter extends MappingDocumentDbConverter {
             return ((Date) value).getTime();
         } else if (value.getClass().isEnum()) {
             return value.toString();
+        } else if (value instanceof Model) {
+            Map<String, Object> result = new HashMap<>();
+            Class<? extends Object> clazz = value.getClass();
+            while (clazz != null) {
+                // for reference document, save the id only
+                for (final Field field : clazz.getDeclaredFields()) {
+                    Object subValue = null;
+                    try {
+                        subValue = FieldUtils.readField(value, field.getName(), true);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    subValue = modifyValue(subValue);
+                    result.put(field.getName(), subValue);
+                }
+                clazz = clazz.getSuperclass();
+            }
+            return result;
         } else {
             return value;
         }

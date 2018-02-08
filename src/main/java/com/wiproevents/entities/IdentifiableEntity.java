@@ -12,7 +12,7 @@ import org.springframework.data.annotation.Id;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class IdentifiableEntity {
+public abstract class IdentifiableEntity implements Model {
     /**
      * The id.
      */

@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NotificationMethodPreference {
+public class NotificationMethodPreference implements Model {
     private String userId;
     private List<NotificationType> notificationTypesCovered = new ArrayList<>();
     private String notificationMethod;
