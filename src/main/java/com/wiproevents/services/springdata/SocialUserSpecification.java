@@ -3,6 +3,7 @@ package com.wiproevents.services.springdata;
 import com.microsoft.azure.spring.data.documentdb.core.query.Query;
 import com.wiproevents.entities.SocialUser;
 import com.wiproevents.entities.SocialUserSearchCriteria;
+import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import lombok.AllArgsConstructor;
 
@@ -21,6 +22,8 @@ public class SocialUserSpecification implements DocumentDbSpecification<SocialUs
 
     @Override
     public Query toQuery(Query query, Map<String, Object> values) {
+        Helper.buildEqualPredict(query, values, "providerId", criteria.getProviderId());
+        Helper.buildEqualPredict(query, values, "providerUserId", criteria.getProviderUserId());
         return query;
     }
 }

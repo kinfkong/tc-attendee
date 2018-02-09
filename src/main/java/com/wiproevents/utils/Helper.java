@@ -310,10 +310,10 @@ public class Helper {
      * @param isUpdating the updating flag.
      * @return the user with encrypted password field.
      */
-    public static User encodePassword(User user, boolean isUpdating) {
+    public static User encodePassword(User user) {
         Helper.checkNull(user, "user");
         String rawPassword = user.getPassword();
-        boolean checkPassword = !isUpdating || rawPassword != null;
+        boolean checkPassword = rawPassword != null;
         if (checkPassword) {
             Helper.checkNullOrEmpty(rawPassword, "user.password");
             PasswordEncoder encoder = getPasswordEncoder();

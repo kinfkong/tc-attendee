@@ -108,7 +108,7 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
      */
     @Transactional
     public User create(User entity) throws AttendeeException {
-        Helper.encodePassword(entity, false);
+        Helper.encodePassword(entity);
         // check unique of the email
         if (entity.getEmail() != null) {
             List<User> user = userRepository.findByEmail(entity.getEmail());
@@ -196,7 +196,7 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
             if (currentDate.before(forgotPassword.getExpiredOn())) {
                 User user = get(forgotPassword.getUserId());
                 user.setPassword(newPass);
-                Helper.encodePassword(user, false);
+                Helper.encodePassword(user);
                 getRepository().save(user);
                 forgotPasswordRepository.deleteByUserId(forgotPassword.getUserId());
                 return true;

@@ -4,6 +4,7 @@ import com.wiproevents.utils.Helper;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.social.SocialWebAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.DefaultErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
@@ -24,8 +25,8 @@ import java.util.UUID;
 /**
  * The main application.
  */
-@SpringBootApplication
-@ComponentScan(basePackages = {"com.wiproevents", "com.wiproevents.security.social"})
+@SpringBootApplication(exclude = SocialWebAutoConfiguration.class)
+@ComponentScan(basePackages = {"com.wiproevents"})
 public class Application {
     /**
      * The request id listener.

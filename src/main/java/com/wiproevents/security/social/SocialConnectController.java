@@ -18,13 +18,18 @@ package com.wiproevents.security.social;
 
 import com.wiproevents.entities.SocialUser;
 import com.wiproevents.entities.User;
+import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
-import org.springframework.social.connect.*;
+import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.ConnectionFactory;
+import org.springframework.social.connect.ConnectionFactoryLocator;
+import org.springframework.social.connect.UserProfile;
+import org.springframework.social.connect.support.OAuth1ConnectionFactory;
 import org.springframework.social.connect.support.OAuth2ConnectionFactory;
 import org.springframework.social.connect.web.*;
 import org.springframework.social.facebook.api.Facebook;
@@ -42,7 +47,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UrlPathHelper;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
@@ -71,8 +75,6 @@ public class SocialConnectController implements InitializingBean {
     @Autowired
     private ConnectionFactoryLocator connectionFactoryLocator;
 
-    private final ConnectionRepository connectionRepository;
-
     private final MultiValueMap<Class<?>, ConnectInterceptor<?>> connectInterceptors = new LinkedMultiValueMap<Class<?>, ConnectInterceptor<?>>();
 
     private final MultiValueMap<Class<?>, DisconnectInterceptor<?>> disconnectInterceptors = new LinkedMultiValueMap<Class<?>, DisconnectInterceptor<?>>();
@@ -89,18 +91,7 @@ public class SocialConnectController implements InitializingBean {
 
     @Autowired
     private UserService userService;
-    /**
-     * Constructs a ConnectController.
-     * @param connectionRepository the current user's {@link ConnectionRepository} needed to persist connections; must be a proxy to a request-scoped bean
-     */
-    public SocialConnectController(ConnectionRepository connectionRepository) {
-        this.connectionRepository = connectionRepository;
-    }
 
-    @PostConstruct
-    public void addInterceptors() {
-
-    }
 
     /**
      * Configure the list of connect interceptors that should receive callbacks during the connection process.
@@ -188,26 +179,6 @@ public class SocialConnectController implements InitializingBean {
     }
 
 
-    /**
-     * Render the status of the connections to the service provider to the user as HTML in their web browser.
-     * @param providerId the ID of the provider to show connection status
-     * @param request the request
-     * @param model the model
-     * @return the view name of the connection status page for all providers
-     */
-    @RequestMapping(value="/{providerId}", method=RequestMethod.GET)
-    public String connectionStatus(@PathVariable String providerId, NativeWebRequest request, Model model) {
-        setNoCache(request);
-        processFlash(request, model);
-        List<Connection<?>> connections = connectionRepository.findConnections(providerId);
-        setNoCache(request);
-        if (connections.isEmpty()) {
-            return connectView(providerId);
-        } else {
-            model.addAttribute("connections", connections);
-            return connectedView(providerId);
-        }
-    }
 
     /**
      * Process a connect form submission by commencing the process of establishing a connection to the provider on behalf of the member.
@@ -249,36 +220,72 @@ public class SocialConnectController implements InitializingBean {
                 throw new IllegalArgumentException("invalid providerId" + providerId + " in url.");
             }
 
-            String providerUserId = connection.getKey().getProviderUserId();
-            user = userService.getUserBySocial(providerId, providerUserId);
-
-            if (user == null) {
-                user = new User();
-
-                // fetch the profile, for facebook, to workaround for this bug:
-                // https://stackoverflow.com/questions/39890885/error-message-is-12-bio-field-is-deprecated-for-versions-v2-8-and-higher
-                // UserProfile profile = connection.fetchUserProfile();
-                Facebook facebook = (Facebook) connection.getApi();
-                String [] fields = { "id", "email"};
-                UserProfile profile = facebook.fetchObject("me", UserProfile.class, fields);
-                user.setEmail(profile.getEmail());
-                user.setFullName(connection.getDisplayName());
-                user.setProfilePictureURL(connection.getImageUrl());
-
-                SocialUser socialUser = new SocialUser();
-
-                socialUser.setProviderId(providerId);
-                socialUser.setProviderUserId(providerUserId);
-
-                // create the user
-                user = userService.createSocialUser(socialUser, user);
-            }
+            processConnection(providerId, connection);
         } catch (Exception e) {
             sessionStrategy.setAttribute(request, PROVIDER_ERROR_ATTRIBUTE, e);
             logger.warn("Exception while handling OAuth2 callback (" + e.getMessage() + "). Redirecting to " + providerId +" connection status page.");
         }
         return connectionStatusRedirect(providerId, request);
     }
+
+    private User processConnection(String providerId, Connection<?> connection) throws AttendeeException {
+        User user;
+        String providerUserId = connection.getKey().getProviderUserId();
+        user = userService.getUserBySocial(providerId, providerUserId);
+
+        if (user == null) {
+            user = new User();
+
+            // fetch the profile
+            if (providerId.equals("facebook")) {
+                // for facebook, to workaround for this bug:
+                // https://stackoverflow.com/questions/39890885/error-message-is-12-bio-field-is-deprecated-for-versions-v2-8-and-higher
+                Facebook facebook = (Facebook) connection.getApi();
+                String [] fields = { "id", "email"};
+                org.springframework.social.facebook.api.User profile =
+                        facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields);
+                user.setEmail(profile.getEmail());
+            } else {
+                UserProfile profile = connection.fetchUserProfile();
+                user.setEmail(profile.getEmail());
+            }
+
+            user.setFullName(connection.getDisplayName());
+            user.setProfilePictureURL(connection.getImageUrl());
+
+            SocialUser socialUser = new SocialUser();
+
+            socialUser.setProviderId(providerId);
+            socialUser.setProviderUserId(providerUserId);
+
+            // create the user
+            user = userService.createSocialUser(socialUser, user);
+        }
+        return user;
+    }
+
+    /**
+     * Process the authorization callback from an OAuth 1 service provider.
+     * Called after the user authorizes the connection, generally done by having he or she click "Allow" in their web browser at the provider's site.
+     * On authorization verification, connects the user's local account to the account they hold at the service provider
+     * Removes the request token from the session since it is no longer valid after the connection is established.
+     * @param providerId the provider ID to connect to
+     * @param request the request
+     * @return a RedirectView to the connection status page
+     */
+    @RequestMapping(value="/{providerId}", method=RequestMethod.GET, params="oauth_token")
+    public RedirectView oauth1Callback(@PathVariable String providerId, NativeWebRequest request) {
+        try {
+            OAuth1ConnectionFactory<?> connectionFactory = (OAuth1ConnectionFactory<?>) connectionFactoryLocator.getConnectionFactory(providerId);
+            Connection<?> connection = connectSupport.completeConnection(connectionFactory, request);
+            processConnection(providerId, connection);
+        } catch (Exception e) {
+            sessionStrategy.setAttribute(request, PROVIDER_ERROR_ATTRIBUTE, e);
+            logger.warn("Exception while handling OAuth1 callback (" + e.getMessage() + "). Redirecting to " + providerId +" connection status page.");
+        }
+        return connectionStatusRedirect(providerId, request);
+    }
+
 
     /**
      * Process an error callback from an OAuth 2 authorization as described at http://tools.ietf.org/html/rfc6749#section-4.1.2.1.
@@ -387,14 +394,6 @@ public class SocialConnectController implements InitializingBean {
         return viewPath;
     }
 
-    private void addConnection(Connection<?> connection, ConnectionFactory<?> connectionFactory, WebRequest request) {
-        try {
-            connectionRepository.addConnection(connection);
-            postConnect(connectionFactory, connection, request);
-        } catch (DuplicateConnectionException e) {
-            sessionStrategy.setAttribute(request, DUPLICATE_CONNECTION_ATTRIBUTE, e);
-        }
-    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void preConnect(ConnectionFactory<?> connectionFactory, MultiValueMap<String, String> parameters, WebRequest request) {
