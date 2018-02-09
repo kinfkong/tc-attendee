@@ -133,6 +133,9 @@ public class Application {
         return templateResolver;
     }
 
+
+
+
     /**
      * The main entry point of the application.
      *

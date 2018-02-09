@@ -231,6 +231,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  //allow anonymous calls to social login
                 .antMatchers("/signup/**")
                 .permitAll()
+                .antMatchers("/connect/**")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

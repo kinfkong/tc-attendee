@@ -22,7 +22,6 @@ import java.util.Map;
 @EnableWebMvc
 @ControllerAdvice
 public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
-
     /**
      * Handle controller exception.
      * @param exception the exception.
@@ -78,6 +77,6 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
         responseBody.put("code", status.value());
         responseBody.put("message", !Helper.isNullOrEmpty(ex.getMessage()) ? ex.getMessage()
                 : "Unexpected error");
-        return new ResponseEntity<>(responseBody, status);
+        return ResponseEntity.status(status).header("Content-Type", "application/json").body(responseBody);
     }
 }
