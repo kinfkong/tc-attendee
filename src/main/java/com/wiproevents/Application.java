@@ -25,7 +25,7 @@ import java.util.UUID;
  * The main application.
  */
 @SpringBootApplication
-@ComponentScan(basePackages = "com.wiproevents")
+@ComponentScan(basePackages = {"com.wiproevents", "com.wiproevents.security.social"})
 public class Application {
     /**
      * The request id listener.

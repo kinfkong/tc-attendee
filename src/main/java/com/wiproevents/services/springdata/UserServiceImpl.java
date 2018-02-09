@@ -5,9 +5,11 @@ import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.EntityNotFoundException;
+import com.wiproevents.services.SocialUserService;
 import com.wiproevents.services.UserService;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
+import com.wiproevents.utils.springdata.extensions.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,9 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
      */
     @Value("${token.expirationTimeInMillis}")
     private long tokenExpirationTimeInMillis;
+
+    @Autowired
+    private SocialUserService socialUserService;
 
 
     /**
@@ -266,6 +271,46 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
             return null;
         }
         return users.get(0);
+    }
+
+    @Override
+    public User getUserBySocial(String providerId, String providerUserId) throws AttendeeException {
+        SocialUserSearchCriteria criteria = new SocialUserSearchCriteria();
+        criteria.setProviderId(providerId);
+        criteria.setProviderUserId(providerUserId);
+        SearchResult<SocialUser> result = socialUserService.search(criteria, null);
+        if (result.getEntities().isEmpty()) {
+            return null;
+        }
+        return this.get(result.getEntities().get(0).getUserId());
+    }
+
+    @Override
+    public User createSocialUser(SocialUser socialUser, User user) throws AttendeeException {
+        if (getUserBySocial(socialUser.getProviderId(), socialUser.getProviderUserId()) != null) {
+            throw new AttendeeException(
+                    "The social user: " + socialUser.getProviderId() + " provider user id: "
+                            + socialUser.getProviderUserId() + " already exists.");
+        }
+
+        User existing = null;
+        if (user.getEmail() != null) {
+            // find existing user by email
+            existing = getUserByEmail(user.getEmail());
+
+        }
+
+        if (existing == null) {
+            // create a new one for the user
+            existing = create(user);
+        }
+
+        socialUser.setUserId(existing.getId());
+
+        // create the social user
+        socialUserService.create(socialUser);
+
+        return existing;
     }
 }
 

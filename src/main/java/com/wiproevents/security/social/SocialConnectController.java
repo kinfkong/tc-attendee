@@ -16,15 +16,18 @@ package com.wiproevents.security.social;
  * limitations under the License.
  */
 
+import com.wiproevents.entities.SocialUser;
+import com.wiproevents.entities.User;
+import com.wiproevents.services.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.social.connect.*;
-import org.springframework.social.connect.support.OAuth1ConnectionFactory;
 import org.springframework.social.connect.support.OAuth2ConnectionFactory;
 import org.springframework.social.connect.web.*;
+import org.springframework.social.facebook.api.Facebook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
@@ -36,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -66,7 +68,8 @@ public class SocialConnectController implements InitializingBean {
 
     private final static Log logger = LogFactory.getLog(org.springframework.social.connect.web.ConnectController.class);
 
-    private final ConnectionFactoryLocator connectionFactoryLocator;
+    @Autowired
+    private ConnectionFactoryLocator connectionFactoryLocator;
 
     private final ConnectionRepository connectionRepository;
 
@@ -85,20 +88,18 @@ public class SocialConnectController implements InitializingBean {
     private String applicationUrl = null;
 
     @Autowired
-    private FacebookConnectInterceptor facebookConnectInterceptor;
+    private UserService userService;
     /**
      * Constructs a ConnectController.
-     * @param connectionFactoryLocator the locator for {@link ConnectionFactory} instances needed to establish connections
      * @param connectionRepository the current user's {@link ConnectionRepository} needed to persist connections; must be a proxy to a request-scoped bean
      */
-    public SocialConnectController(ConnectionFactoryLocator connectionFactoryLocator, ConnectionRepository connectionRepository) {
-        this.connectionFactoryLocator = connectionFactoryLocator;
+    public SocialConnectController(ConnectionRepository connectionRepository) {
         this.connectionRepository = connectionRepository;
     }
 
     @PostConstruct
     public void addInterceptors() {
-        this.addInterceptor(facebookConnectInterceptor);
+
     }
 
     /**
@@ -186,21 +187,6 @@ public class SocialConnectController implements InitializingBean {
         disconnectInterceptors.add(serviceApiType, interceptor);
     }
 
-    /**
-     * Render the status of connections across all providers to the user as HTML in their web browser.
-     * @param request the request
-     * @param model the model
-     * @return the view name of the connection status page for all providers
-     */
-    @RequestMapping(method= RequestMethod.GET)
-    public String connectionStatus(NativeWebRequest request, Model model) {
-        setNoCache(request);
-        processFlash(request, model);
-        Map<String, List<Connection<?>>> connections = connectionRepository.findAllConnections();
-        model.addAttribute("providerIds", connectionFactoryLocator.registeredProviderIds());
-        model.addAttribute("connectionMap", connections);
-        return connectView();
-    }
 
     /**
      * Render the status of the connections to the service provider to the user as HTML in their web browser.
@@ -244,27 +230,6 @@ public class SocialConnectController implements InitializingBean {
         }
     }
 
-    /**
-     * Process the authorization callback from an OAuth 1 service provider.
-     * Called after the user authorizes the connection, generally done by having he or she click "Allow" in their web browser at the provider's site.
-     * On authorization verification, connects the user's local account to the account they hold at the service provider
-     * Removes the request token from the session since it is no longer valid after the connection is established.
-     * @param providerId the provider ID to connect to
-     * @param request the request
-     * @return a RedirectView to the connection status page
-     */
-    @RequestMapping(value="/{providerId}", method=RequestMethod.GET, params="oauth_token")
-    public RedirectView oauth1Callback(@PathVariable String providerId, NativeWebRequest request) {
-        try {
-            OAuth1ConnectionFactory<?> connectionFactory = (OAuth1ConnectionFactory<?>) connectionFactoryLocator.getConnectionFactory(providerId);
-            Connection<?> connection = connectSupport.completeConnection(connectionFactory, request);
-            addConnection(connection, connectionFactory, request);
-        } catch (Exception e) {
-            sessionStrategy.setAttribute(request, PROVIDER_ERROR_ATTRIBUTE, e);
-            logger.warn("Exception while handling OAuth1 callback (" + e.getMessage() + "). Redirecting to " + providerId +" connection status page.");
-        }
-        return connectionStatusRedirect(providerId, request);
-    }
 
     /**
      * Process the authorization callback from an OAuth 2 service provider.
@@ -276,10 +241,38 @@ public class SocialConnectController implements InitializingBean {
      */
     @RequestMapping(value="/{providerId}", method=RequestMethod.GET, params="code")
     public RedirectView oauth2Callback(@PathVariable String providerId, NativeWebRequest request) {
+        User user = null;
         try {
             OAuth2ConnectionFactory<?> connectionFactory = (OAuth2ConnectionFactory<?>) connectionFactoryLocator.getConnectionFactory(providerId);
             Connection<?> connection = connectSupport.completeConnection(connectionFactory, request);
-            addConnection(connection, connectionFactory, request);
+            if (!providerId.equals(connection.getKey().getProviderId())) {
+                throw new IllegalArgumentException("invalid providerId" + providerId + " in url.");
+            }
+
+            String providerUserId = connection.getKey().getProviderUserId();
+            user = userService.getUserBySocial(providerId, providerUserId);
+
+            if (user == null) {
+                user = new User();
+
+                // fetch the profile, for facebook, to workaround for this bug:
+                // https://stackoverflow.com/questions/39890885/error-message-is-12-bio-field-is-deprecated-for-versions-v2-8-and-higher
+                // UserProfile profile = connection.fetchUserProfile();
+                Facebook facebook = (Facebook) connection.getApi();
+                String [] fields = { "id", "email"};
+                UserProfile profile = facebook.fetchObject("me", UserProfile.class, fields);
+                user.setEmail(profile.getEmail());
+                user.setFullName(connection.getDisplayName());
+                user.setProfilePictureURL(connection.getImageUrl());
+
+                SocialUser socialUser = new SocialUser();
+
+                socialUser.setProviderId(providerId);
+                socialUser.setProviderUserId(providerUserId);
+
+                // create the user
+                user = userService.createSocialUser(socialUser, user);
+            }
         } catch (Exception e) {
             sessionStrategy.setAttribute(request, PROVIDER_ERROR_ATTRIBUTE, e);
             logger.warn("Exception while handling OAuth2 callback (" + e.getMessage() + "). Redirecting to " + providerId +" connection status page.");
@@ -311,50 +304,6 @@ public class SocialConnectController implements InitializingBean {
         return connectionStatusRedirect(providerId, request);
     }
 
-    /**
-     * Remove all provider connections for a user account.
-     * The user has decided they no longer wish to use the service provider from this application.
-     * Note: requires {@link HiddenHttpMethodFilter} to be registered with the '_method' request parameter set to 'DELETE' to convert web browser POSTs to DELETE requests.
-     * @param providerId the provider ID to remove the connections for
-     * @param request the request
-     * @return a RedirectView to the connection status page
-     */
-    @RequestMapping(value="/{providerId}", method=RequestMethod.DELETE)
-    public RedirectView removeConnections(@PathVariable String providerId, NativeWebRequest request) {
-        ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(providerId);
-        preDisconnect(connectionFactory, request);
-        connectionRepository.removeConnections(providerId);
-        postDisconnect(connectionFactory, request);
-        return connectionStatusRedirect(providerId, request);
-    }
-
-    /**
-     * Remove a single provider connection associated with a user account.
-     * The user has decided they no longer wish to use the service provider account from this application.
-     * Note: requires {@link HiddenHttpMethodFilter} to be registered with the '_method' request parameter set to 'DELETE' to convert web browser POSTs to DELETE requests.
-     * @param providerId the provider ID to remove connections for
-     * @param providerUserId the user's ID at the provider
-     * @param request the request
-     * @return a RedirectView to the connection status page
-     */
-    @RequestMapping(value="/{providerId}/{providerUserId}", method=RequestMethod.DELETE)
-    public RedirectView removeConnection(@PathVariable String providerId, @PathVariable String providerUserId, NativeWebRequest request) {
-        ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(providerId);
-        preDisconnect(connectionFactory, request);
-        connectionRepository.removeConnection(new ConnectionKey(providerId, providerUserId));
-        postDisconnect(connectionFactory, request);
-        return connectionStatusRedirect(providerId, request);
-    }
-
-    // subclassing hooks
-    /**
-     * Returns the view name of a general connection status page, typically displaying the user's connection status for all providers.
-     * Defaults to "/connect/status". May be overridden to return a custom view name.
-     * @return the view name of the connection status page
-     */
-    protected String connectView() {
-        return getViewPath() + "status";
-    }
 
     /**
      * Returns the view name of a page to display for a provider when the user is not connected to the provider.

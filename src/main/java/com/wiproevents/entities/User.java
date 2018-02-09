@@ -5,11 +5,9 @@ import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Enumerated;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
-import static javax.persistence.EnumType.STRING;
 
 /**
  * The user.
@@ -19,6 +17,10 @@ import static javax.persistence.EnumType.STRING;
 @Document(collection = "user")
 public class User extends AuditableEntity {
     /**
+     * The email.
+     */
+    private String email;
+    /**
      * The password (hashed).
      */
     @JsonProperty(access = WRITE_ONLY)
@@ -27,18 +29,18 @@ public class User extends AuditableEntity {
 
     private String fullName;
 
-
-    private List<UserRole> roles;
-
-    /**
-     * The email.
-     */
-    private String email;
-
+    private String personalPhone;
+    private String businessPhone;
+    private String businessUnit;
+    private Designation designation;
+    private String aboutMe;
+    private String profilePictureURL;
     /**
      * The user status.
      */
-    @Enumerated(STRING)
     private UserStatus status;
+
+
+    private List<UserRole> roles;
 }
 

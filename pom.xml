@@ -47,8 +47,8 @@
         <spring.datasource.password>${env.DB_PASSWORD}</spring.datasource.password>
         <spring.datasource.maxActive>${env.DB_POOLSIZE}</spring.datasource.maxActive>
 
-        <spring.social.facebook.appId>${env.SOCIAL_FACEBOOK_APP_ID}</spring.social.facebook.appId>
-        <spring.social.facebook.appSecret>${env.SOCIAL_FACEBOOK_APP_ID}</spring.social.facebook.appSecret>
+        <social.facebook.appId>${env.SOCIAL_FACEBOOK_APP_ID}</social.facebook.appId>
+        <social.facebook.appSecret>${env.SOCIAL_FACEBOOK_APP_SECRET}</social.facebook.appSecret>
 
         <spring.mail.host>${env.MAIL_SMTP_HOST}</spring.mail.host>
         <spring.mail.port>${env.MAIL_SMTP_PORT}</spring.mail.port>

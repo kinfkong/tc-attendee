@@ -1,9 +1,6 @@
 package com.wiproevents.services;
 
-import com.wiproevents.entities.ForgotPassword;
-import com.wiproevents.entities.NewPassword;
-import com.wiproevents.entities.User;
-import com.wiproevents.entities.UserSearchCriteria;
+import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.EntityNotFoundException;
 import com.wiproevents.exceptions.AttendeeException;
@@ -52,5 +49,9 @@ public interface UserService extends GenericService<User, UserSearchCriteria> {
     User getUserByAccessToken(String accessToken);
 
     User getUserByEmail(String email) throws AttendeeException;
+
+    User getUserBySocial(String providerId, String providerUserId) throws AttendeeException;
+
+    User createSocialUser(SocialUser socialUser, User user) throws AttendeeException;
 }
 
