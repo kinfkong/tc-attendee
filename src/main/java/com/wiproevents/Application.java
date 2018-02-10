@@ -154,13 +154,6 @@ public class Application {
      * @param args the arguments
      */
     public static void main(String[] args) {
-        // change to use Spanish Locale
-        // see http://www.oracle.com/technetwork/java/javase/java8locales-2095355.html
-        // Locale.setDefault(new Locale("es"));
-
-        // System.setProperty("socksProxyHost", "127.0.0.1");
-        // System.setProperty("socksProxyPort", "8921");
-
         SpringApplication.run(Application.class, args);
     }
 }

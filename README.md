@@ -148,6 +148,8 @@ visit [http://localhost:8080/test_pages/social.html](http://localhost:8080/test_
 
 ### demo video
 A short video demo is here:
-
+http://take.ms/syZUT  
+and  
+http://take.ms/0pLgS
 
 
