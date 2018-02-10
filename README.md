@@ -141,6 +141,14 @@ Open **http://editor.swagger.io/** and copy  `docs/swagger.yaml` to verify.
 Prepare clean and test data in db with `drop collections` and `create collections` commands using the above db tool..
 
 Import Postman collection `docs/postman_collection.json` with environment variables `docs/postman_collection-env.json`. 
+There are 2 users pre-set in the test data, for 'USER' role, use:
+email: user@tc.com  
+password: 123456  
+for 'admin' role, use:
+email: admin@tc.com
+password; 123456 
+ 
+ You can register your own users for tests.
 
 ### Social login Verification
 We need to use the browser for social login. 

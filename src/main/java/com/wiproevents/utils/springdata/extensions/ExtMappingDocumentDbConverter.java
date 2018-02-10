@@ -13,6 +13,9 @@ import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.data.mapping.model.MappingException;
 
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -56,7 +59,26 @@ public class ExtMappingDocumentDbConverter extends MappingDocumentDbConverter {
             clazz = clazz.getSuperclass();
         }
     }
+    public static String toISO8601UTC(Date date) {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        df.setTimeZone(tz);
+        return df.format(date);
+    }
 
+    public static Date fromISO8601UTC(String dateStr) {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        df.setTimeZone(tz);
+
+        try {
+            return df.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
     @SuppressWarnings("unchecked")
     private Object modifyValue(Object value) {
         if (value == null) {
@@ -75,7 +97,7 @@ public class ExtMappingDocumentDbConverter extends MappingDocumentDbConverter {
             result.put("id", ((IdentifiableEntity) value).getId());
             return result;
         } else if (value instanceof Date) {
-            return ((Date) value).getTime();
+            return toISO8601UTC((Date) value);
         } else if (value.getClass().isEnum()) {
             return value.toString();
         } else if (value instanceof Model) {
