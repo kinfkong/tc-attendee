@@ -3,6 +3,8 @@ package com.wiproevents.services.springdata;
 import com.wiproevents.entities.ForgotPassword;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationRepository;
 
+import java.util.List;
+
 /**
  * The ForgotPassword repository.
  */
@@ -12,14 +14,7 @@ public interface ForgotPasswordRepository extends DocumentDbSpecificationReposit
      * @param token the reset password token
      * @return the forgot password
      */
-    ForgotPassword findByToken(String token);
-
-    /**
-     * Get count by user id.
-     * @param userId the user id.
-     * @return the count of forgot password entities by user id.
-     */
-    long countByUserId(String userId);
+    List<ForgotPassword> findByToken(String token);
 
 
     /**

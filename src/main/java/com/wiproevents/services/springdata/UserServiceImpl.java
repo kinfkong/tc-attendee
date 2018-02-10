@@ -33,12 +33,6 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     private long forgotPasswordExpirationTimeInMillis;
 
     /**
-     * The maxTimes to send forgot password request for single user.
-     */
-    @Value("${forgotPassword.maxTimes}")
-    private long forgotPasswordMaxTimes;
-
-    /**
      * The token expires milliseconds for 10 days.
      */
     @Value("${token.expirationTimeInMillis}")
@@ -88,7 +82,6 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
         Helper.checkConfigNotNull(userRepository, "userRepository");
         Helper.checkConfigPositive(forgotPasswordExpirationTimeInMillis,
                 "forgotPasswordExpirationTimeInMillis");
-        Helper.checkConfigPositive(forgotPasswordMaxTimes, "forgotPasswordMaxTimes");
         Helper.checkConfigPositive(tokenExpirationTimeInMillis, "tokenExpirationTimeInMillis");
     }
 
@@ -189,10 +182,6 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     @Transactional
     public ForgotPassword forgotPassword(String userId) throws AttendeeException {
         Helper.checkNullOrEmpty(userId, "userId");
-        long count = forgotPasswordRepository.countByUserId(userId);
-        if (count > forgotPasswordMaxTimes) {
-            throw new AccessDeniedException("Reach max times to send forgot password request!");
-        }
         ForgotPassword forgotPassword = new ForgotPassword();
         String token = UUID.randomUUID().toString();
         Date expiredOn = new Date(System.currentTimeMillis() + forgotPasswordExpirationTimeInMillis);
@@ -211,21 +200,25 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
      * @throws AttendeeException if any other error occurred during operation
      */
     @Transactional
-    public boolean updatePassword(NewPassword newPassword) throws AttendeeException {
+    public boolean updatePasswordWithForgotPasswordToken(NewPassword newPassword) throws AttendeeException {
         Helper.checkNull(newPassword, "newPassword");
-        String token = newPassword.getToken();
+        String token = newPassword.getForgotPasswordToken();
         String newPass = newPassword.getNewPassword();
         Helper.checkNullOrEmpty(token, "newPassword.token");
         Helper.checkNullOrEmpty(newPass, "newPassword.newPassword");
-        ForgotPassword forgotPassword = forgotPasswordRepository.findByToken(token);
-        if (forgotPassword != null) {
+        List<ForgotPassword> forgotPasswords = forgotPasswordRepository.findByToken(token);
+        if (forgotPasswords != null && forgotPasswords.size() > 0) {
+            ForgotPassword forgotPassword = forgotPasswords.get(0);
             Date currentDate = new Date();
             if (currentDate.before(forgotPassword.getExpiredOn())) {
                 User user = get(forgotPassword.getUserId());
+                if (!newPassword.getEmail().equals(user.getEmail())) {
+                    throw new IllegalArgumentException("The token is not bind with this email.");
+                }
                 user.setPassword(newPass);
                 Helper.encodePassword(user);
                 getRepository().save(user);
-                forgotPasswordRepository.deleteByUserId(forgotPassword.getUserId());
+                forgotPasswordRepository.delete(forgotPassword.getId());
                 return true;
             }
         } else {
@@ -233,6 +226,22 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
         }
         return false;
     }
+
+    @Override
+    public boolean updatePasswordWithOldPassword(NewPassword newPassword) throws AttendeeException {
+        Helper.checkNull(newPassword, "newPassword");
+        Helper.checkNullOrEmpty("old password", newPassword.getOldPassword());
+        Helper.checkNullOrEmpty("New password", newPassword.getNewPassword());
+        User user = Helper.getAuthUser();
+        if (!Helper.getPasswordEncoder().matches(newPassword.getOldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("The old password is not correct");
+        }
+        user.setPassword(newPassword.getNewPassword());
+        Helper.encodePassword(user);
+        getRepository().save(user);
+        return true;
+    }
+
 
 
     @Override

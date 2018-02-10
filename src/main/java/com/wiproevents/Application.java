@@ -129,7 +129,11 @@ public class Application {
     private ITemplateResolver templateResolver(String file, TemplateMode mode) {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/templates/");
-        templateResolver.setSuffix(file + ".vm");
+        String suffix = ".html";
+        if (mode == TemplateMode.TEXT) {
+            suffix = ".txt";
+        }
+        templateResolver.setSuffix("/" + file + suffix);
         templateResolver.setTemplateMode(mode);
         templateResolver.setCharacterEncoding("UTF8");
         templateResolver.setCheckExistence(true);

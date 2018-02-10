@@ -146,9 +146,9 @@ public class UserController extends BaseEmailController {
      * @throws AttendeeException if any other error occurred during operation
      */
     @Transactional
-    @RequestMapping(value = "updatePassword", method = RequestMethod.PUT)
+    @RequestMapping(value = "updatePasswordWithForgotPasswordToken", method = RequestMethod.PUT)
     public boolean updatePassword(@RequestBody NewPassword newPassword) throws AttendeeException {
-        return userService.updatePassword(newPassword);
+        return userService.updatePasswordWithForgotPasswordToken(newPassword);
     }
 
 

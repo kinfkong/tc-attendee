@@ -1,24 +1,19 @@
 package com.wiproevents.entities;
 
+import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.Temporal;
 import java.util.Date;
-
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * The forgot password.
  */
 @Getter
 @Setter
+@Document(collection = "forgot_password_token")
 public class ForgotPassword extends IdentifiableEntity {
-    /**
-     * The user id.
-     */
-    @JoinColumn(name = "user_id")
+
     private String userId;
 
     /**
@@ -29,7 +24,6 @@ public class ForgotPassword extends IdentifiableEntity {
     /**
      * The expired on date.
      */
-    @Temporal(TIMESTAMP)
     private Date expiredOn;
 }
 

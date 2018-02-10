@@ -29,8 +29,10 @@ public interface UserService extends GenericService<User, UserSearchCriteria> {
      * @throws IllegalArgumentException if newPassword is null or invalid
      * @throws AttendeeException if any other error occurred during operation
      */
-    boolean updatePassword(NewPassword newPassword) throws AttendeeException;
+    boolean updatePasswordWithForgotPasswordToken(NewPassword newPassword) throws AttendeeException;
 
+
+    boolean updatePasswordWithOldPassword(NewPassword newPassword) throws AttendeeException;
 
     /**
      * Gets my profile.

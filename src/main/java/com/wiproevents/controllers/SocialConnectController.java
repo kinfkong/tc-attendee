@@ -1,4 +1,4 @@
-package com.wiproevents.security.social;
+package com.wiproevents.controllers;
 
 /*
  * Copyright 2015 the original author or authors.

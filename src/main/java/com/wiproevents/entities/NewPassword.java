@@ -9,10 +9,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NewPassword  {
+
+    private String email;
+
     /**
      * The token.
      */
-    private String token;
+    private String forgotPasswordToken;
+
+    private String oldPassword;
 
     /**
      * The new password.

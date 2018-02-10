@@ -1,9 +1,12 @@
 package com.wiproevents.controllers;
 
+import com.wiproevents.entities.ForgotPassword;
+import com.wiproevents.entities.NewPassword;
 import com.wiproevents.entities.User;
 import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
+import com.wiproevents.exceptions.EntityNotFoundException;
 import com.wiproevents.services.UserService;
 import com.wiproevents.utils.Helper;
 import lombok.NoArgsConstructor;
@@ -12,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.context.Context;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -83,6 +87,36 @@ public class SecurityController extends BaseEmailController {
     @RequestMapping(method = RequestMethod.GET, value = "me")
     public User getMe() throws AttendeeException {
         return userService.getMe();
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "initiateForgotPassword")
+    public boolean initiateForgotPassword(@RequestParam String email) throws AttendeeException {
+        Helper.checkNullOrEmpty("email", email);
+        User user = userService.getUserByEmail(email);
+        if (user == null) {
+            throw new EntityNotFoundException("There is no user of email: " + email);
+        }
+        ForgotPassword forgotPassword = userService.forgotPassword(user.getId());
+        // send the email
+        Context context = new Context();
+
+        context.setVariable("user", user);
+        context.setVariable("forgotPassword", forgotPassword);
+
+        super.sendEmail(email, "forgotPassword", context);
+        return true;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "changeForgotPassword")
+    public boolean changeForgotPassword(@RequestBody NewPassword newPassword) throws AttendeeException {
+        userService.updatePasswordWithForgotPasswordToken(newPassword);
+        return true;
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "updatePassword")
+    public boolean updatePassword(@RequestBody NewPassword newPassword) throws AttendeeException {
+        userService.updatePasswordWithOldPassword(newPassword);
+        return true;
     }
 }
 
