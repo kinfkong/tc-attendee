@@ -46,6 +46,9 @@ public class RepositoryRelation {
     @Autowired
     private UserPermissionRepository userPermissionRepository;
 
+    @Autowired
+    private DesignationRepository designationRepository;
+
     @PostConstruct
     public void handleRepositoryRelations() {
         handleEventRepository();
@@ -89,5 +92,6 @@ public class RepositoryRelation {
 
     private void handleUserRepository() {
         userRepository.addNestedRepository("roles", userRoleRepository);
+        userRepository.addNestedRepository("designation", designationRepository);
     }
 }

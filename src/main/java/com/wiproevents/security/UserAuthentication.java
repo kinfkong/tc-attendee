@@ -1,6 +1,7 @@
 package com.wiproevents.security;
 
 import com.wiproevents.entities.User;
+import com.wiproevents.entities.UserPermission;
 import com.wiproevents.entities.UserRole;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,7 +43,14 @@ public class UserAuthentication implements Authentication {
         List<UserRole> roles = user.getRoles();
         if (roles != null) {
             for (UserRole role : roles) {
-                auths.add(new SimpleGrantedAuthority(role.getName()));
+                auths.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+                if (role.getPermissions() != null) {
+                    for (UserPermission p : role.getPermissions()) {
+                        auths.add(new SimpleGrantedAuthority(p.getName()));
+                    }
+
+                }
+
             }
         }
         return new ArrayList<>(auths);

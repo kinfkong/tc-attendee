@@ -1,6 +1,7 @@
 package com.wiproevents.security;
 
 import com.wiproevents.entities.User;
+import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.services.UserService;
 import com.wiproevents.utils.Helper;
@@ -68,7 +69,12 @@ public class TokenAuthenticationService {
         final String tokenString = request.getHeader(AUTH_HEADER_NAME);
         if (tokenString != null && tokenString.split(" ").length > 1) {
             final String token = tokenString.split(" ")[1];
-            final User user = userService.getUserByAccessToken(token);
+            User user;
+            try {
+                user = userService.getUserByAccessToken(token);
+            } catch (AttendeeException e) {
+                user = null;
+            }
             if (user != null) {
                 return new UserAuthentication(user);
             }

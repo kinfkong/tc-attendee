@@ -1,17 +1,19 @@
 package com.wiproevents.controllers;
 
-import com.wiproevents.entities.*;
+import com.wiproevents.entities.ForgotPassword;
+import com.wiproevents.entities.NewPassword;
+import com.wiproevents.entities.User;
+import com.wiproevents.entities.UserSearchCriteria;
 import com.wiproevents.exceptions.AccessDeniedException;
+import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.EntityNotFoundException;
-import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.UserService;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.Paging;
 import com.wiproevents.utils.springdata.extensions.SearchResult;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.context.Context;
 
@@ -57,20 +59,6 @@ public class UserController extends BaseEmailController {
         return userService.get(id);
     }
 
-    /**
-     * This method is used to create an entity.
-     *
-     * @param entity the entity to create
-     * @return the created entity
-     * @throws IllegalArgumentException if entity is null or not valid
-     * @throws AttendeeException if any other error occurred during operation
-     */
-    @Transactional
-    @RequestMapping(method = RequestMethod.POST, value = "signup")
-    @ResponseStatus(HttpStatus.CREATED)
-    public User create(@RequestBody User entity) throws AttendeeException {
-        return userService.create(entity);
-    }
 
     /**
      * This method is used to update an entity.

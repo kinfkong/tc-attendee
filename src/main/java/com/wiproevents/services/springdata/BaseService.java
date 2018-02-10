@@ -253,7 +253,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
         }
     }
 
-    protected void validateReference(String path, Object value, DocumentDbRepository<?, String> pathRepository) throws AttendeeException {
+    private void validateReference(String path, Object value, DocumentDbRepository<?, String> pathRepository) throws AttendeeException {
         if (value == null) {
             return;
         }

@@ -145,24 +145,35 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
         return result;
     }
 
-    /**
-     * This method is used to update an entity.
-     *
-     * @param id the id of the entity to update
-     * @param entity the entity to update
-     * @return the updated entity
-     * @throws IllegalArgumentException if id is not positive or entity is null or id of entity is not positive
-     * or id of  entity not match id or entity is invalid
-     * @throws EntityNotFoundException if the entity does not exist
-     * @throws AttendeeException if any other error occurred during operation
-     */
-    @Transactional
-    public User update(String id, User entity) throws AttendeeException {
-        User existing = super.checkUpdate(id, entity);
-        if (Helper.isUpdated(existing, entity)) {
-            return getRepository().save(existing);
+
+
+    @Override
+    protected void handleNestedUpdate(User entity, User oldEntity) throws AttendeeException {
+        super.handleNestedUpdate(entity, oldEntity);
+
+        // don't update the password in this api
+        entity.setPassword(oldEntity.getPassword());
+        if (entity.getRoles() == null || entity.getRoles().isEmpty()) {
+            throw new IllegalArgumentException("Should contains at lease one role.");
         }
-        return existing;
+        // validate the email
+        if (entity.getEmail() != null) {
+            boolean ok = true;
+            List<User> usersOfEmail = userRepository.findByEmail(entity.getEmail());
+            if (usersOfEmail.size() > 0) {
+                ok = false;
+            }
+            for (User u : usersOfEmail) {
+                if (u.getId().equals(entity.getId())) {
+                    ok = true;
+                    break;
+                }
+            }
+            if (!ok) {
+                throw new IllegalArgumentException("Email has been taken by other users.");
+            }
+        }
+
     }
 
     /**
@@ -262,7 +273,7 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     }
 
     @Override
-    public User getUserByAccessToken(String accessToken){
+    public User getUserByAccessToken(String accessToken) throws AttendeeException {
         String hashedToken = Helper.encodeToken(accessToken);
 
         List<AccessToken> tokens = accessTokenRepository.findByToken(hashedToken);
@@ -276,8 +287,8 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
             return null;
         }
 
-        // get by the id of the user
-        return userRepository.findOne(token.getUserId());
+        // populate the fields use get
+        return this.get(token.getUserId());
     }
 
     @Override

@@ -6,7 +6,10 @@ import com.microsoft.azure.spring.data.documentdb.repository.DocumentDbRepositor
 import com.microsoft.azure.spring.data.documentdb.repository.support.DocumentDbEntityInformation;
 import com.microsoft.azure.spring.data.documentdb.repository.support.SimpleDocumentDbRepository;
 import com.wiproevents.entities.IdentifiableEntity;
+import com.wiproevents.utils.Helper;
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 import java.io.Serializable;
@@ -17,6 +20,11 @@ import java.util.*;
  * Created by wangjinggang on 2018/2/5.
  */
 public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> extends SimpleDocumentDbRepository<T, ID> implements DocumentDbSpecificationRepository<T, ID> {
+
+    /**
+     * The logger with package fullName.
+     */
+    public static final Logger LOGGER = LogManager.getLogger("com.wiproevents");
 
     private final ExtDocumentDbOperations documentDbOperations;
     private final DocumentDbEntityInformation<T, ID> entityInformation;
@@ -51,7 +59,7 @@ public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> e
     @Override
     public T findOne(ID id, Boolean withPopulatedFields) {
         T entity = super.findOne(id);
-        if (withPopulatedFields) {
+        if (withPopulatedFields && entity != null) {
             populateReference(entity);
         }
         return entity;
@@ -170,8 +178,9 @@ public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> e
             nestedEntity = pathRepository.findOne(entityId);
         }
         if (nestedEntity == null) {
-            throw new IllegalStateException(
+            Exception e = new IllegalStateException(
                     "The id " + entityId + " in path: " + path + " cannot find entity.");
+            Helper.logException(LOGGER, this.getClass().getName() + "#populateReference", e);
         }
 
         return nestedEntity;

@@ -4,7 +4,6 @@ import com.wiproevents.entities.User;
 import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
-import com.wiproevents.exceptions.EntityNotFoundException;
 import com.wiproevents.services.UserService;
 import com.wiproevents.utils.Helper;
 import lombok.NoArgsConstructor;
@@ -43,20 +42,6 @@ public class SecurityController extends BaseEmailController {
         Helper.checkConfigNotNull(userService, "userService");
     }
 
-
-    /**
-     * This method is used to retrieve an entity.
-     *
-     * @param id the id of the entity to retrieve
-     * @return the match entity
-     * @throws IllegalArgumentException if id is not positive
-     * @throws EntityNotFoundException if the entity does not exist
-     * @throws AttendeeException if any other error occurred during operation
-     */
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public User get(@PathVariable String id) throws AttendeeException {
-        return userService.get(id);
-    }
 
     /**
      * This method is used to create an entity.

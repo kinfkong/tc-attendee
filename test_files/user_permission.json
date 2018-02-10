@@ -1,0 +1,5 @@
+[
+{"_attachments":"attachments/","_rid":"RXJ0AOZQTgUBAAAAAAAAAA==","name":"CREATE_EVENT","id":"dbcb194c-e476-7466-060f-b31fb670a5ed","_self":"dbs/RXJ0AA==/colls/RXJ0AOZQTgU=/docs/RXJ0AOZQTgUBAAAAAAAAAA==/","_etag":"\"00007bbd-0000-0000-0000-5a7e602a0000\"","_ts":1518231594},
+{"_attachments":"attachments/","_rid":"RXJ0AOZQTgUCAAAAAAAAAA==","name":"CREATE_SESSION","id":"5ee8597f-f368-b5ec-bc7f-f8eaee2b33ef","_self":"dbs/RXJ0AA==/colls/RXJ0AOZQTgU=/docs/RXJ0AOZQTgUCAAAAAAAAAA==/","_etag":"\"000081bd-0000-0000-0000-5a7e604e0000\"","_ts":1518231630},
+{"_attachments":"attachments/","_rid":"RXJ0AOZQTgUDAAAAAAAAAA==","name":"VIEW_EVENT","id":"c745e285-623b-3630-e80b-b9668cb5ca16","_self":"dbs/RXJ0AA==/colls/RXJ0AOZQTgU=/docs/RXJ0AOZQTgUDAAAAAAAAAA==/","_etag":"\"000083bd-0000-0000-0000-5a7e607e0000\"","_ts":1518231678}
+]
