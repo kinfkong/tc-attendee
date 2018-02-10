@@ -77,14 +77,12 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http:///timezones",
+							"raw": "{{URL}}/lookups/timezones",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
+								"lookups",
 								"timezones"
 							]
 						},
@@ -113,321 +111,6 @@
 							""
 						]
 					}
-				}
-			]
-		},
-		{
-			"name": "eventAttendeeByQRCode",
-			"description": "Folder for eventAttendeeByQRCode",
-			"item": [
-				{
-					"name": "Get EventAttendee by QR code.",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendeeByQRCode",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendeeByQRCode"
-							]
-						},
-						"description": "Get EventAttendee by QR code. \n"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "eventAttendees",
-			"description": "Folder for eventAttendees",
-			"item": [
-				{
-					"name": "Search EventAttendees.",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendees?eventId={{eventId}}&userId={{userId}}&status={{status}}&offset={{offset}}&limit={{limit}}&sortColumn={{sortColumn}}&sortOrder={{sortOrder}}",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendees"
-							],
-							"query": [
-								{
-									"key": "eventId",
-									"value": "{{eventId}}"
-								},
-								{
-									"key": "userId",
-									"value": "{{userId}}"
-								},
-								{
-									"key": "status",
-									"value": "{{status}}"
-								},
-								{
-									"key": "offset",
-									"value": "{{offset}}"
-								},
-								{
-									"key": "limit",
-									"value": "{{limit}}"
-								},
-								{
-									"key": "sortColumn",
-									"value": "{{sortColumn}}"
-								},
-								{
-									"key": "sortOrder",
-									"value": "{{sortOrder}}"
-								}
-							]
-						},
-						"description": "Search EventAttendee. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Create event EventAttendee.",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendees",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendees"
-							]
-						},
-						"description": "Create event EventAttendee. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Get EventAttendee.",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendees/:id",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendees",
-								":id"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Get EventAttendee. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Update EventAttendee.",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendees/:id",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendees",
-								":id"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Update EventAttendee. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete EventAttendee.",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendees/:id",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendees",
-								":id"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Delete EventAttendee. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Approve EventAttendee.",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendees/:id/approve",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendees",
-								":id",
-								"approve"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Approve EventAttendee. The badge and QR code should be generated and returned in response.\n"
-					},
-					"response": []
-				},
-				{
-					"name": "Reject EventAttendee.",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendees/:id/reject",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendees",
-								":id",
-								"reject"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Reject EventAttendee. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete EventAttendee.",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendees/:id/delete",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendees",
-								":id",
-								"delete"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Delete EventAttendee. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Check in EventAttendee.",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///eventAttendees/:id/checkIn",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"eventAttendees",
-								":id",
-								"checkIn"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Check in EventAttendee. \n"
-					},
-					"response": []
 				}
 			]
 		},
@@ -745,24 +428,33 @@
 					"name": "Update EventDayAgenda.",
 					"request": {
 						"method": "PUT",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"{{DAY_AGENDA_ID}}\",\n    \"event\": {\n      \"id\": \"{{EVENT_ID}}\"\n    },\n    \"day\": 321,\n    \"breaks\": [\n      {\n        \"name\": \"string\",\n        \"venue\": \"string\",\n        \"building\": \"string\",\n        \"rooms\": \"string\",\n        \"mapImage\": {\n          \"id\": \"{{FILE_ID}}\"\n        },\n        \"startTime\": \"2017-01-01\",\n        \"endTime\": \"2018-01-01\"\n      }\n    ]\n  }"
+						},
 						"url": {
-							"raw": "http:///eventDayAgendas/:id",
+							"raw": "{{URL}}/eventDayAgendas/:id",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"eventDayAgendas",
 								":id"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "{{DAY_AGENDA_ID}}"
 								}
 							]
 						},
@@ -774,24 +466,26 @@
 					"name": "Delete EventDayAgenda.",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///eventDayAgendas/:id",
+							"raw": "{{URL}}/eventDayAgendas/:id",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"eventDayAgendas",
 								":id"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "{{DAY_AGENDA_ID}}"
 								}
 							]
 						},
@@ -1247,25 +941,27 @@
 					"name": "Get event dashboard.",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///events/:id/dashboard",
+							"raw": "{{URL}}/events/:id/dashboard",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"events",
 								":id",
 								"dashboard"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "eaf0e008-4b0e-4438-88a5-45b2e7c9154c"
 								}
 							]
 						},
@@ -1277,25 +973,27 @@
 					"name": "Get event day agendas.",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///events/:id/dayAgendas",
+							"raw": "{{URL}}/events/:id/dayAgendas",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"events",
 								":id",
 								"dayAgendas"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "{{EVENT_ID}}"
 								}
 							]
 						},
@@ -1307,179 +1005,31 @@
 					"name": "Get event sessions.",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///events/:id/sessions",
+							"raw": "{{URL}}/events/:id/sessions",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"events",
 								":id",
 								"sessions"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "{{EVENT_ID}}"
 								}
 							]
 						},
 						"description": "Get Event sessions. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Get event engagements.",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///events/:id/engagements",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"events",
-								":id",
-								"engagements"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Get Event engagements. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Search event FAQs.",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///events/:id/eventFAQ",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"events",
-								":id",
-								"eventFAQ"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Search event FAQs. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Update EventFAQ.",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///events/:id/eventFAQ",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"events",
-								":id",
-								"eventFAQ"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Update EventFAQ. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Create event FAQ.",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///events/:id/eventFAQ",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"events",
-								":id",
-								"eventFAQ"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Create event FAQ. \n"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete EventFAQ.",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http:///events/:id/eventFAQ",
-							"host": [
-								"http:"
-							],
-							"port": "",
-							"path": [
-								"",
-								"",
-								"events",
-								":id",
-								"eventFAQ"
-							],
-							"variable": [
-								{
-									"value": "{{id}}",
-									"id": "id"
-								}
-							]
-						},
-						"description": "Delete EventFAQ.\n"
 					},
 					"response": []
 				}
@@ -1493,47 +1043,62 @@
 					"name": "Search SessionAttendees.",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///sessionAttendees?sessionId={{sessionId}}&userId={{userId}}&status={{status}}&offset={{offset}}&limit={{limit}}&sortColumn={{sortColumn}}&sortOrder={{sortOrder}}",
+							"raw": "{{URL}}/sessionAttendees?status=Deleted",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"sessionAttendees"
 							],
 							"query": [
 								{
 									"key": "sessionId",
-									"value": "{{sessionId}}"
+									"value": "3fbcb32f-a073-400e-bd7d-26cc91e1fdc1",
+									"equals": true,
+									"disabled": true
 								},
 								{
 									"key": "userId",
-									"value": "{{userId}}"
+									"value": "7842146d-4c0a-4fab-9cf7-0a14f8fa4c83",
+									"equals": true,
+									"disabled": true
 								},
 								{
 									"key": "status",
-									"value": "{{status}}"
+									"value": "Deleted",
+									"equals": true
 								},
 								{
 									"key": "offset",
-									"value": "{{offset}}"
+									"value": "{{offset}}",
+									"equals": true,
+									"disabled": true
 								},
 								{
 									"key": "limit",
-									"value": "{{limit}}"
+									"value": "{{limit}}",
+									"equals": true,
+									"disabled": true
 								},
 								{
 									"key": "sortColumn",
-									"value": "{{sortColumn}}"
+									"value": "{{sortColumn}}",
+									"equals": true,
+									"disabled": true
 								},
 								{
 									"key": "sortOrder",
-									"value": "{{sortOrder}}"
+									"value": "{{sortOrder}}",
+									"equals": true,
+									"disabled": true
 								}
 							]
 						},
@@ -1545,17 +1110,26 @@
 					"name": "Create event SessionAttendee.",
 					"request": {
 						"method": "POST",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\": {\n    \"id\": \"{{USER_ID}}\"\n  },\n  \"session\": {\n    \"id\": \"{{SESSION_ID}}\"\n  },\n  \"registeredOn\": \"2017-01-01\"\n}"
+						},
 						"url": {
-							"raw": "http:///sessionAttendees",
+							"raw": "{{URL}}/sessionAttendees",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"sessionAttendees"
 							]
 						},
@@ -1567,24 +1141,26 @@
 					"name": "Get SessionAttendee.",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///sessionAttendees/:id",
+							"raw": "{{URL}}/sessionAttendees/:id",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"sessionAttendees",
 								":id"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "676e2240-9a0f-42d0-affb-3b8499fee5e7"
 								}
 							]
 						},
@@ -1596,24 +1172,33 @@
 					"name": "Update SessionAttendee.",
 					"request": {
 						"method": "PUT",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"676e2240-9a0f-42d0-affb-3b8499fee5e7\",\n  \"user\": {\n    \"id\": \"{{USER_ID}}\"\n  },\n  \"session\": {\n    \"id\": \"{{SESSION_ID}}\"\n  },\n  \"registeredOn\": \"2017-02-01\",\n  \"status\": \"Deleted\"\n}"
+						},
 						"url": {
-							"raw": "http:///sessionAttendees/:id",
+							"raw": "{{URL}}/sessionAttendees/:id",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"sessionAttendees",
 								":id"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "676e2240-9a0f-42d0-affb-3b8499fee5e7"
 								}
 							]
 						},
@@ -1625,24 +1210,26 @@
 					"name": "Delete SessionAttendee.",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///sessionAttendees/:id",
+							"raw": "{{URL}}/sessionAttendees/:id",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"sessionAttendees",
 								":id"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "676e2240-9a0f-42d0-affb-3b8499fee5e7"
 								}
 							]
 						},
@@ -1654,25 +1241,27 @@
 					"name": "Set SessionAttendee status to deleted.",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///sessionAttendees/:id/delete",
+							"raw": "{{URL}}/sessionAttendees/:id/delete",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"sessionAttendees",
 								":id",
 								"delete"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "547b4be7-b382-4ca7-a708-67cc72d5a275"
 								}
 							]
 						},
@@ -1907,27 +1496,31 @@
 					"name": "Get UserEventAssignments.",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///userEventAssignments?userId={{userId}}&eventId={{eventId}}",
+							"raw": "{{URL}}/userEventAssignments?userId={{USER_ID}}&eventId={{EVENT_ID}}",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"userEventAssignments"
 							],
 							"query": [
 								{
 									"key": "userId",
-									"value": "{{userId}}"
+									"value": "{{USER_ID}}",
+									"equals": true
 								},
 								{
 									"key": "eventId",
-									"value": "{{eventId}}"
+									"value": "{{EVENT_ID}}",
+									"equals": true
 								}
 							]
 						},
@@ -1939,17 +1532,26 @@
 					"name": "Create UserEventAssignment.",
 					"request": {
 						"method": "POST",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user\": {\n\t\t\"id\": \"{{USER_ID}}\"\n\t},\n\t\"event\": {\n\t\t\"id\": \"{{EVENT_ID}}\"\n\t},\n\t\"roles\": [{\n\t\t\"id\": \"{{ADMIN_ROLE_ID}}\"\n\t}] \n}"
+						},
 						"url": {
-							"raw": "http:///userEventAssignments",
+							"raw": "{{URL}}/userEventAssignments",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"userEventAssignments"
 							]
 						},
@@ -1961,24 +1563,33 @@
 					"name": "Update UserEventAssignment.",
 					"request": {
 						"method": "PUT",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_TOKEN}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"34b3a899-6ed6-4afe-afa9-6635d72d03d9\",\n\t\"user\": {\n\t\t\"id\": \"{{USER_ID}}\"\n\t},\n\t\"event\": {\n\t\t\"id\": \"{{EVENT_ID}}\"\n\t},\n\t\"roles\": [{\n\t\t\"id\": \"{{ADMIN_ROLE_ID}}\"\n\t}] \n}"
+						},
 						"url": {
-							"raw": "http:///userEventAssignments/:id",
+							"raw": "{{URL}}/userEventAssignments/:id",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"userEventAssignments",
 								":id"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "34b3a899-6ed6-4afe-afa9-6635d72d03d9"
 								}
 							]
 						},
@@ -1990,24 +1601,26 @@
 					"name": "Delete UserEventAssignment.",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_TOKEN}}"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http:///userEventAssignments/:id",
+							"raw": "{{URL}}/userEventAssignments/:id",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"userEventAssignments",
 								":id"
 							],
 							"variable": [
 								{
-									"value": "{{id}}",
-									"id": "id"
+									"key": "id",
+									"value": "5dc9476e-52a7-428b-b507-c7ae2586295c"
 								}
 							]
 						},
@@ -2061,7 +1674,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"e5c53f4b-dc5c-4c50-b394-68ce834e07ef\",\n    \"createdOn\": null,\n    \"updatedOn\": null,\n    \"userId\": \"7835f199-e6a6-46ec-99a9-c84bc86bb32d\",\n    \"notificationMethodPreferences\": [\n    {\n      \"userId\": \"7835f199-e6a6-46ec-99a9-c84bc86bb32d\",\n      \"notificationTypesCovered\": [\n        {\n          \"id\": \"5b725233-b50e-2161-bfe6-41a861e23fb7\",\n          \"name\": \"abc\",\n          \"text\": \"New poll is available.\",\n          \"relatedModel\": \"Poll\"\n        }\n      ],\n      \"notificationMethod\": \"SMS\"\n    }\n  ],\n    \"rooms\": [\"room1\"],\n    \"food\": []\n}"
+							"raw": "{\n    \"notificationMethodPreferences\": [\n    {\n      \"notificationTypesCovered\": [\n        {\n          \"id\": \"5b725233-b50e-2161-bfe6-41a861e23fb7\"\n        }\n      ],\n      \"notificationMethod\": \"SMS\"\n    }\n  ],\n    \"rooms\": [\"room1\"],\n    \"food\": [\"fish\", \"meat\"]\n}"
 						},
 						"url": {
 							"raw": "{{URL}}/userPreferences",
@@ -2523,7 +2136,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"fullName\": \"kinfkong\",\n  \"email\": \"jjinggtt@tc.com\",\n  \"password\": \"xxxxxxx\"\n}"
+							"raw": "{\n  \"fullName\": \"John Nash\",\n  \"email\": \"user@tc.com\",\n  \"password\": \"123456\"\n}"
 						},
 						"url": {
 							"raw": "{{URL}}/signup",
@@ -2647,20 +2260,28 @@
 							"type": "basic",
 							"basic": [
 								{
-									"key": "password",
-									"value": "abcdefg",
+									"key": "username",
+									"value": "user@tc.com",
 									"type": "string"
 								},
 								{
-									"key": "username",
-									"value": "kinfkong@126.com",
+									"key": "password",
+									"value": "123456",
 									"type": "string"
 								}
 							]
 						},
 						"method": "POST",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"rememberMe\": false\n}"
+						},
 						"url": {
 							"raw": "{{URL}}/login",
 							"host": [
@@ -2678,17 +2299,27 @@
 					"name": "Log out.",
 					"request": {
 						"method": "POST",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "http:///logout",
+							"raw": "{{URL}}/logout",
 							"host": [
-								"http:"
+								"{{URL}}"
 							],
-							"port": "",
 							"path": [
-								"",
-								"",
 								"logout"
 							]
 						},

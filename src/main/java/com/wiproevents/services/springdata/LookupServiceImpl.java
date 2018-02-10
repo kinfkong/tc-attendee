@@ -1,20 +1,15 @@
 package com.wiproevents.services.springdata;
 
-import com.wiproevents.entities.Country;
-import com.wiproevents.entities.Designation;
-import com.wiproevents.entities.UserPermission;
-import com.wiproevents.entities.UserRole;
+import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.services.LookupService;
 import com.wiproevents.utils.Helper;
-import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +34,9 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private UserPermissionRepository permisionRepository;
+
+    @Autowired
+    private TimezoneRepository timezoneRepository;
 
     /**
      * Check if all required fields are initialized properly.
@@ -80,6 +78,13 @@ public class LookupServiceImpl implements LookupService {
     public List<UserPermission> getPermissions() throws AttendeeException {
         List<UserPermission> list = new ArrayList<>();
         permisionRepository.findAll().forEach(list::add);
+        return list;
+    }
+
+    @Override
+    public List<Timezone> getTimezones() throws AttendeeException {
+        List<Timezone> list = new ArrayList<>();
+        timezoneRepository.findAll().forEach(list::add);
         return list;
     }
 }

@@ -1,9 +1,6 @@
 package com.wiproevents.services;
 
-import com.wiproevents.entities.Country;
-import com.wiproevents.entities.Designation;
-import com.wiproevents.entities.UserPermission;
-import com.wiproevents.entities.UserRole;
+import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.AttendeeException;
 
 import java.util.List;
@@ -25,5 +22,7 @@ public interface LookupService {
     List<Country> getCountries() throws AttendeeException;
 
     List<UserPermission> getPermissions() throws AttendeeException;
+
+    List<Timezone> getTimezones() throws AttendeeException;
 }
 

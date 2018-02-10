@@ -1,9 +1,6 @@
 package com.wiproevents.controllers;
 
-import com.wiproevents.entities.Country;
-import com.wiproevents.entities.Designation;
-import com.wiproevents.entities.UserPermission;
-import com.wiproevents.entities.UserRole;
+import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.services.LookupService;
@@ -65,6 +62,11 @@ public class LookupController {
     @RequestMapping(value = "/permissions", method = RequestMethod.GET)
     public List<UserPermission> getPermissions() throws AttendeeException {
         return lookupService.getPermissions();
+    }
+
+    @RequestMapping(value = "/timezones", method = RequestMethod.GET)
+    public List<Timezone> getTimezones() throws AttendeeException {
+        return lookupService.getTimezones();
     }
 }
 

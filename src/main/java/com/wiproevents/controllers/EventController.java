@@ -1,8 +1,7 @@
 package com.wiproevents.controllers;
 
 
-import com.wiproevents.entities.Event;
-import com.wiproevents.entities.EventSearchCriteria;
+import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.EventService;
 import com.wiproevents.utils.Helper;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  * The Task REST controller. Is effectively thread safe.
@@ -52,6 +52,51 @@ public class EventController {
     public Event get(@PathVariable String id) throws AttendeeException {
         return eventService.get(id);
     }
+
+    /**
+     * This method is used to retrieve an entity.
+     *
+     * @param id the id of the entity to retrieve
+     * @return the match entity
+     * @throws IllegalArgumentException if id is not positive
+     * @throws EntityNotFoundException if the entity does not exist
+     * @throws AttendeeException if any other error occurred during operation
+     */
+    @RequestMapping(value = "{id}/dashboard", method = RequestMethod.GET)
+    public EventStatistics dashboard(@PathVariable String id) throws AttendeeException {
+        EventStatistics es = eventService.calculateDashboard(id);
+        return es;
+    }
+
+    /**
+     * This method is used to retrieve an entity.
+     *
+     * @param id the id of the entity to retrieve
+     * @return the match entity
+     * @throws IllegalArgumentException if id is not positive
+     * @throws EntityNotFoundException if the entity does not exist
+     * @throws AttendeeException if any other error occurred during operation
+     */
+    @RequestMapping(value = "{id}/sessions", method = RequestMethod.GET)
+    public List<Session> eventSessions(@PathVariable String id) throws AttendeeException {
+        return eventService.getSessions(id);
+    }
+
+    /**
+     * This method is used to retrieve an entity.
+     *
+     * @param id the id of the entity to retrieve
+     * @return the match entity
+     * @throws IllegalArgumentException if id is not positive
+     * @throws EntityNotFoundException if the entity does not exist
+     * @throws AttendeeException if any other error occurred during operation
+     */
+    @RequestMapping(value = "{id}/dayAgendas", method = RequestMethod.GET)
+    public List<EventDayAgenda> dayAgendas(@PathVariable String id) throws AttendeeException {
+        return eventService.getDayAgendas(id);
+    }
+
+    
 
     /**
      * This method is used to create an entity.

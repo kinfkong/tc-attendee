@@ -3,6 +3,7 @@ package com.wiproevents.entities;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,5 +20,5 @@ public class EventStatistics {
     private int numberOfApprovedAttendees;
     private int numberOfRejectedAttendees;
     private int numberOfTicketsLefts;
-    private List<SessionStatistics> sessions;
+    private List<SessionStatistics> sessions = new ArrayList<>();
 }
