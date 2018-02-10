@@ -13,6 +13,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -30,6 +31,7 @@ import java.util.UUID;
 @ComponentScan(basePackages = {"com.wiproevents"}, excludeFilters = {
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.wiproevents.dbtool.*")
 })
+@EnableWebMvc
 public class Application {
     /**
      * The request id listener.

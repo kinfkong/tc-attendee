@@ -22,9 +22,8 @@ import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.GenericTypeResolver;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionFactory;
 import org.springframework.social.connect.ConnectionFactoryLocator;
@@ -49,9 +48,9 @@ import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,12 +67,15 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/signup")
-public class SocialConnectController implements InitializingBean {
+public class SocialConnectController {
 
     private final static Log logger = LogFactory.getLog(org.springframework.social.connect.web.ConnectController.class);
 
     @Autowired
     private ConnectionFactoryLocator connectionFactoryLocator;
+
+    @Value("${social.oauth.result.url}")
+    private String resultUrl;
 
     private final MultiValueMap<Class<?>, ConnectInterceptor<?>> connectInterceptors = new LinkedMultiValueMap<Class<?>, ConnectInterceptor<?>>();
 
@@ -83,71 +85,12 @@ public class SocialConnectController implements InitializingBean {
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
-    private String viewPath = "connect/";
-
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
 
     private String applicationUrl = null;
 
     @Autowired
     private UserService userService;
-
-
-    /**
-     * Configure the list of connect interceptors that should receive callbacks during the connection process.
-     * Convenient when an instance of this class is configured using a dbtool that supports JavaBeans-based configuration.
-     * @param interceptors the connect interceptors to add
-     * @deprecated Use {@link #setConnectInterceptors(List)} instead.
-     */
-    @Deprecated
-    public void setInterceptors(List<ConnectInterceptor<?>> interceptors) {
-        setConnectInterceptors(interceptors);
-    }
-
-    /**
-     * Configure the list of connect interceptors that should receive callbacks during the connection process.
-     * Convenient when an instance of this class is configured using a dbtool that supports JavaBeans-based configuration.
-     * @param interceptors the connect interceptors to add
-     */
-    public void setConnectInterceptors(List<ConnectInterceptor<?>> interceptors) {
-        for (ConnectInterceptor<?> interceptor : interceptors) {
-            addInterceptor(interceptor);
-        }
-    }
-
-    /**
-     * Configure the list of discconnect interceptors that should receive callbacks when connections are removed.
-     * Convenient when an instance of this class is configured using a dbtool that supports JavaBeans-based configuration.
-     * @param interceptors the connect interceptors to add
-     */
-    public void setDisconnectInterceptors(List<DisconnectInterceptor<?>> interceptors) {
-        for (DisconnectInterceptor<?> interceptor : interceptors) {
-            addDisconnectInterceptor(interceptor);
-        }
-    }
-
-    /**
-     * Configures the base secure URL for the application this controller is being used in e.g. <code>https://myapp.com</code>. Defaults to null.
-     * If specified, will be used to generate OAuth callback URLs.
-     * If not specified, OAuth callback URLs are generated from web request info.
-     * You may wish to set this property if requests into your application flow through a proxy to your application server.
-     * In this case, the request URI may contain a scheme, host, and/or port value that points to an internal server not appropriate for an external callback URL.
-     * If you have this problem, you can set this property to the base external URL for your application and it will be used to construct the callback URL instead.
-     * @param applicationUrl the application URL value
-     */
-    public void setApplicationUrl(String applicationUrl) {
-        this.applicationUrl = applicationUrl;
-    }
-
-    /**
-     * Sets the path to connection status views.
-     * Prepended to provider-specific views (e.g., "connect/facebookConnected") to create the complete view name.
-     * Defaults to "connect/".
-     * @param viewPath The path to connection status views.
-     */
-    public void setViewPath(String viewPath) {
-        this.viewPath = viewPath;
-    }
 
     /**
      * Sets a strategy to use when persisting information that is to survive past the boundaries of a request.
@@ -156,26 +99,6 @@ public class SocialConnectController implements InitializingBean {
      */
     public void setSessionStrategy(SessionStrategy sessionStrategy) {
         this.sessionStrategy = sessionStrategy;
-    }
-
-    /**
-     * Adds a ConnectInterceptor to receive callbacks during the connection process.
-     * Useful for programmatic configuration.
-     * @param interceptor the connect interceptor to add
-     */
-    public void addInterceptor(ConnectInterceptor<?> interceptor) {
-        Class<?> serviceApiType = GenericTypeResolver.resolveTypeArgument(interceptor.getClass(), ConnectInterceptor.class);
-        connectInterceptors.add(serviceApiType, interceptor);
-    }
-
-    /**
-     * Adds a DisconnectInterceptor to receive callbacks during the disconnection process.
-     * Useful for programmatic configuration.
-     * @param interceptor the connect interceptor to add
-     */
-    public void addDisconnectInterceptor(DisconnectInterceptor<?> interceptor) {
-        Class<?> serviceApiType = GenericTypeResolver.resolveTypeArgument(interceptor.getClass(), DisconnectInterceptor.class);
-        disconnectInterceptors.add(serviceApiType, interceptor);
     }
 
 
@@ -192,12 +115,11 @@ public class SocialConnectController implements InitializingBean {
     public RedirectView connect(@PathVariable String providerId, NativeWebRequest request) {
         ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(providerId);
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
-        preConnect(connectionFactory, parameters, request);
         try {
             return new RedirectView(connectSupport.buildOAuthUrl(connectionFactory, request, parameters));
         } catch (Exception e) {
             sessionStrategy.setAttribute(request, PROVIDER_ERROR_ATTRIBUTE, e);
-            return connectionStatusRedirect(providerId, request);
+            return connectionStatusRedirect(providerId, request, null, e);
         }
     }
 
@@ -220,12 +142,14 @@ public class SocialConnectController implements InitializingBean {
                 throw new IllegalArgumentException("invalid providerId" + providerId + " in url.");
             }
 
-            processConnection(providerId, connection);
+            User innerUser = processConnection(providerId, connection);
+            return connectionStatusRedirect(providerId, request, innerUser, null);
         } catch (Exception e) {
             sessionStrategy.setAttribute(request, PROVIDER_ERROR_ATTRIBUTE, e);
             logger.warn("Exception while handling OAuth2 callback (" + e.getMessage() + "). Redirecting to " + providerId +" connection status page.");
+            return connectionStatusRedirect(providerId, request, null, e);
         }
-        return connectionStatusRedirect(providerId, request);
+
     }
 
     private User processConnection(String providerId, Connection<?> connection) throws AttendeeException {
@@ -278,12 +202,13 @@ public class SocialConnectController implements InitializingBean {
         try {
             OAuth1ConnectionFactory<?> connectionFactory = (OAuth1ConnectionFactory<?>) connectionFactoryLocator.getConnectionFactory(providerId);
             Connection<?> connection = connectSupport.completeConnection(connectionFactory, request);
-            processConnection(providerId, connection);
+            User innerUser = processConnection(providerId, connection);
+            return connectionStatusRedirect(providerId, request, innerUser, null);
         } catch (Exception e) {
             sessionStrategy.setAttribute(request, PROVIDER_ERROR_ATTRIBUTE, e);
             logger.warn("Exception while handling OAuth1 callback (" + e.getMessage() + "). Redirecting to " + providerId +" connection status page.");
+            return connectionStatusRedirect(providerId, request, null, e);
         }
-        return connectionStatusRedirect(providerId, request);
     }
 
 
@@ -308,31 +233,9 @@ public class SocialConnectController implements InitializingBean {
         if (errorDescription != null) { errorMap.put("errorDescription", errorDescription); }
         if (errorUri != null) { errorMap.put("errorUri", errorUri); }
         sessionStrategy.setAttribute(request, AUTHORIZATION_ERROR_ATTRIBUTE, errorMap);
-        return connectionStatusRedirect(providerId, request);
+        return connectionStatusRedirect(providerId, request, null, new IllegalStateException("Failed to authorized, " + error));
     }
 
-
-    /**
-     * Returns the view name of a page to display for a provider when the user is not connected to the provider.
-     * Typically this page would offer the user an opportunity to create a connection with the provider.
-     * Defaults to "connect/{providerId}Connect". May be overridden to return a custom view name.
-     * @param providerId the ID of the provider to display the connection status for.
-     * @return the view name of a page to display when the user isn't connected to the provider
-     */
-    protected String connectView(String providerId) {
-        return getViewPath() + providerId + "Connect";
-    }
-
-    /**
-     * Returns the view name of a page to display for a provider when the user is connected to the provider.
-     * Typically this page would allow the user to disconnect from the provider.
-     * Defaults to "connect/{providerId}Connected". May be overridden to return a custom view name.
-     * @param providerId the ID of the provider to display the connection status for.
-     * @return the view name of a page to display when the user is connected to the provider
-     */
-    protected String connectedView(String providerId) {
-        return getViewPath() + providerId + "Connected";
-    }
 
     /**
      * Returns a RedirectView with the URL to redirect to after a connection is created or deleted.
@@ -342,21 +245,26 @@ public class SocialConnectController implements InitializingBean {
      * @param request the NativeWebRequest used to access the servlet path when constructing the redirect path.
      * @return a RedirectView to the page to be displayed after a connection is created or deleted
      */
-    protected RedirectView connectionStatusRedirect(String providerId, NativeWebRequest request) {
-        HttpServletRequest servletRequest = request.getNativeRequest(HttpServletRequest.class);
-        String path = "/connect/" + providerId + getPathExtension(servletRequest);
-        if (prependServletPath(servletRequest)) {
-            path = servletRequest.getServletPath() + path;
+    protected RedirectView connectionStatusRedirect(String providerId, NativeWebRequest request, User user, Exception e) {
+        String path = resultUrl;
+        try {
+            if (e != null) {
+                String msg = e.getMessage();
+                if (msg == null) {
+                    msg = "unknown reason.";
+                }
+                path += "?err=" + URLEncoder.encode(msg, "UTF-8");
+            } else if (user == null) {
+                path += "?err=" + URLEncoder.encode("error in fetch the inner user", "UTF-8");
+            } else {
+                String token = userService.createTokenForUser(user);
+                path += "?accessToken=" + token;
+            }
+
+        } catch (UnsupportedEncodingException e1) {
+            // ignore
         }
         return new RedirectView(path, true);
-    }
-
-    // From InitializingBean
-    public void afterPropertiesSet() throws Exception {
-        this.connectSupport = new ConnectSupport(sessionStrategy);
-        if (applicationUrl != null) {
-            this.connectSupport.setApplicationUrl(applicationUrl);
-        }
     }
 
     // internal helpers
@@ -390,56 +298,6 @@ public class SocialConnectController implements InitializingBean {
         return urlPath.substring(begin, end);
     }
 
-    private String getViewPath() {
-        return viewPath;
-    }
-
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void preConnect(ConnectionFactory<?> connectionFactory, MultiValueMap<String, String> parameters, WebRequest request) {
-        for (ConnectInterceptor interceptor : interceptingConnectionsTo(connectionFactory)) {
-            interceptor.preConnect(connectionFactory, parameters, request);
-        }
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void postConnect(ConnectionFactory<?> connectionFactory, Connection<?> connection, WebRequest request) {
-        for (ConnectInterceptor interceptor : interceptingConnectionsTo(connectionFactory)) {
-            interceptor.postConnect(connection, request);
-        }
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void preDisconnect(ConnectionFactory<?> connectionFactory, WebRequest request) {
-        for (DisconnectInterceptor interceptor : interceptingDisconnectionsTo(connectionFactory)) {
-            interceptor.preDisconnect(connectionFactory, request);
-        }
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void postDisconnect(ConnectionFactory<?> connectionFactory, WebRequest request) {
-        for (DisconnectInterceptor interceptor : interceptingDisconnectionsTo(connectionFactory)) {
-            interceptor.postDisconnect(connectionFactory, request);
-        }
-    }
-
-    private List<ConnectInterceptor<?>> interceptingConnectionsTo(ConnectionFactory<?> connectionFactory) {
-        Class<?> serviceType = GenericTypeResolver.resolveTypeArgument(connectionFactory.getClass(), ConnectionFactory.class);
-        List<ConnectInterceptor<?>> typedInterceptors = connectInterceptors.get(serviceType);
-        if (typedInterceptors == null) {
-            typedInterceptors = Collections.emptyList();
-        }
-        return typedInterceptors;
-    }
-
-    private List<DisconnectInterceptor<?>> interceptingDisconnectionsTo(ConnectionFactory<?> connectionFactory) {
-        Class<?> serviceType = GenericTypeResolver.resolveTypeArgument(connectionFactory.getClass(), ConnectionFactory.class);
-        List<DisconnectInterceptor<?>> typedInterceptors = disconnectInterceptors.get(serviceType);
-        if (typedInterceptors == null) {
-            typedInterceptors = Collections.emptyList();
-        }
-        return typedInterceptors;
-    }
 
     private void processFlash(WebRequest request, Model model) {
         convertSessionAttributeToModelAttribute(DUPLICATE_CONNECTION_ATTRIBUTE, request, model);

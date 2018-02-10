@@ -10,6 +10,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -79,6 +80,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web
+                .ignoring()
+                .antMatchers("/test_pages/**");
+    }
+
     /**
      * Configure authentication.
      *
@@ -105,6 +114,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .cacheControl()
             .and()
             .and()
+
             .authorizeRequests()
             .antMatchers("/").permitAll()
                 //allow anonymous for lookup,forgot password, update password requests
@@ -132,7 +142,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .httpBasic().authenticationEntryPoint(entryPoint)
                 .and()
-                .logout().logoutUrl("/dummy/logout"); // set to another dummy logout url so that it can use ours.
+                .logout().logoutUrl("/x-logout"); // set to another dummy logout url so that it can use ours.
     }
 }
 
