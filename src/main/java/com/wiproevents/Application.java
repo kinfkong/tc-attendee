@@ -4,6 +4,9 @@ import com.wiproevents.utils.Helper;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.social.SocialWebAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.DefaultErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
@@ -13,7 +16,6 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -27,11 +29,11 @@ import java.util.UUID;
 /**
  * The main application.
  */
-@SpringBootApplication(exclude = SocialWebAutoConfiguration.class)
+@SpringBootApplication(exclude = {SocialWebAutoConfiguration.class, DataSourceAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 @ComponentScan(basePackages = {"com.wiproevents"}, excludeFilters = {
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.wiproevents.dbtool.*")
 })
-@EnableWebMvc
 public class Application {
     /**
      * The request id listener.
