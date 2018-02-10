@@ -42,11 +42,6 @@
         <azure.documentdb.key>${env.COSMOS_DB_KEY}</azure.documentdb.key>
         <azure.documentdb.database>${env.COSMOS_DB_NAME}</azure.documentdb.database>
 
-        <spring.datasource.url>${env.DB_URL}</spring.datasource.url>
-        <spring.datasource.username>${env.DB_USERNAME}</spring.datasource.username>
-        <spring.datasource.password>${env.DB_PASSWORD}</spring.datasource.password>
-        <spring.datasource.maxActive>${env.DB_POOLSIZE}</spring.datasource.maxActive>
-
         <social.facebook.appId>${env.SOCIAL_FACEBOOK_APP_ID}</social.facebook.appId>
         <social.facebook.appSecret>${env.SOCIAL_FACEBOOK_APP_SECRET}</social.facebook.appSecret>
 
