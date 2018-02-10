@@ -1,17 +1,16 @@
 package com.wiproevents.controllers;
 
-import com.wiproevents.entities.ForgotPassword;
-import com.wiproevents.entities.NewPassword;
-import com.wiproevents.entities.User;
-import com.wiproevents.entities.VerifyEmailToken;
+import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.exceptions.EntityNotFoundException;
+import com.wiproevents.security.UserAuthentication;
 import com.wiproevents.services.UserService;
 import com.wiproevents.utils.Helper;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.context.Context;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,12 @@ public class SecurityController extends BaseEmailController {
     @Autowired
     private UserService userService;
 
+    @Value("${cookie.tokenMaxAgesInSec}")
+    private int cookieTokenMaxAgesInSec;
+
+    @Value("${cookie.tokenName}")
+    private String cookieAuthTokenName;
+
     /**
      * Check if all required fields are initialized properly.
      *
@@ -45,6 +52,8 @@ public class SecurityController extends BaseEmailController {
     protected void checkConfiguration() {
         super.checkConfiguration();
         Helper.checkConfigNotNull(userService, "userService");
+        Helper.checkConfigPositive(cookieTokenMaxAgesInSec, "cookieTokenMaxAgesInSec");
+        Helper.checkConfigNotNull(cookieAuthTokenName, "cookieAuthTokenName");
     }
 
 
@@ -80,7 +89,7 @@ public class SecurityController extends BaseEmailController {
      * @throws AttendeeException if any other error occurred during operation
      */
     @RequestMapping(method = RequestMethod.POST, value = "login")
-    public Map<String, String> login() throws AttendeeException {
+    public Map<String, String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) throws AttendeeException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // validate valid user exists in SimpleUserDetailsService already
@@ -91,7 +100,32 @@ public class SecurityController extends BaseEmailController {
         Map<String, String> result = new HashMap<>();
         result.put("token", token);
 
+        // write the cookies
+        Cookie cookie = new Cookie(cookieAuthTokenName, token);
+        if (loginRequest.isRememberMe()) {
+            cookie.setMaxAge(cookieTokenMaxAgesInSec);
+        } else {
+            // session cookie
+            cookie.setMaxAge(-1);
+        }
+
+        response.addCookie(cookie);
         return result;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "logout")
+    public boolean logout(HttpServletResponse response) throws AttendeeException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof UserAuthentication) {
+            String currentToken = ((UserAuthentication) authentication).getCurrentAuthToken();
+            // revoke the token
+            userService.revokeAccessToken(currentToken);
+        }
+        Cookie cookie = new Cookie(cookieAuthTokenName, null);
+        // delete the cookie
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return true;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "me")

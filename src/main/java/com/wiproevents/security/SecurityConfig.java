@@ -17,7 +17,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
-import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.PUT;
 
 /**
  * The application security config.
@@ -86,6 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationEntryPoint entryPoint = new CustomAuthenticationEntryPoint();
+
         http.csrf()
             .disable()
             .sessionManagement()
@@ -125,12 +127,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  //allow anonymous calls to social login
                 .antMatchers("/signup/**")
                 .permitAll()
-                .antMatchers("/connect/**")
-                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic().authenticationEntryPoint(entryPoint);
+                .httpBasic().authenticationEntryPoint(entryPoint)
+                .and()
+                .logout().logoutUrl("/dummy/logout"); // set to another dummy logout url so that it can use ours.
     }
 }
 

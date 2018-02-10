@@ -405,5 +405,14 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
         }
         return false;
     }
+
+    @Override
+    public void revokeAccessToken(String currentToken) throws AttendeeException {
+        String hashedToken = Helper.encodeToken(currentToken);
+        List<AccessToken> tokens = accessTokenRepository.findByToken(hashedToken);
+        for (AccessToken token : tokens) {
+            accessTokenRepository.delete(token.getId());
+        }
+    }
 }
 

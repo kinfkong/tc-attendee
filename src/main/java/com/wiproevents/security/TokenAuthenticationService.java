@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -76,21 +75,12 @@ public class TokenAuthenticationService {
                 user = null;
             }
             if (user != null) {
-                return new UserAuthentication(user);
+                UserAuthentication authentication = new UserAuthentication(user);
+                authentication.setCurrentAuthToken(token);
+                return authentication;
             }
         }
         return null;
     }
 
-    /**
-     * Create cookie for token.
-     *
-     * @param token the token.
-     * @return cookie with auth token
-     */
-    private Cookie createCookieForToken(String token) {
-        final Cookie authCookie = new Cookie(AUTH_COOKIE_NAME, token);
-        authCookie.setPath("/");
-        return authCookie;
-    }
 }

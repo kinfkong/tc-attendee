@@ -62,5 +62,7 @@ public interface UserService extends GenericService<User, UserSearchCriteria> {
     User createSocialUser(SocialUser socialUser, User user) throws AttendeeException;
 
     boolean verifyEmail(String email, String verificationToken) throws AttendeeException;
+
+    void revokeAccessToken(String currentToken) throws AttendeeException;
 }
 

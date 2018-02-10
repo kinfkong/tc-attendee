@@ -23,6 +23,9 @@ public class UserAuthentication implements Authentication {
      */
     private boolean authenticated = true;
 
+
+    private String currentAuthToken;
+
     /**
      * The user authentication constructor.
      *
@@ -115,5 +118,13 @@ public class UserAuthentication implements Authentication {
     @Override
     public String getName() {
         return user.getEmail();
+    }
+
+    public String getCurrentAuthToken() {
+        return currentAuthToken;
+    }
+
+    public void setCurrentAuthToken(String currentAuthToken) {
+        this.currentAuthToken = currentAuthToken;
     }
 }
