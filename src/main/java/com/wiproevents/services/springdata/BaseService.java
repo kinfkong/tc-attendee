@@ -271,11 +271,8 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
 
         IdentifiableEntity v = (IdentifiableEntity) value;
         String entityId = v.getId();
+        Helper.checkNullOrEmpty(entityId, "The id in path: " + path);
 
-        if (entityId == null) {
-            throw new IllegalArgumentException(
-                    "The class: " + value.getClass() + " of path:  " + path + " id cannot be null.");
-        }
 
         // check existence
         Object nestedEntity = pathRepository.findOne(entityId);

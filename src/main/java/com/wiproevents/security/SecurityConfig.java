@@ -18,7 +18,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 
 /**
@@ -130,13 +131,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/verifyEmail")
                 .permitAll()
-                .antMatchers(PUT, "/users")
-                .hasRole("USER")
-                .antMatchers(GET, "/users")
-                .hasRole("USER")
                  //allow anonymous calls to social login
                 .antMatchers("/signup/**")
                 .permitAll()
+                .antMatchers(POST, "/userEventAssignments")
+                .hasRole("ADMIN")
+                .antMatchers(PUT, "/userEventAssignments")
+                .hasRole("ADMIN")
+                .antMatchers(DELETE, "/userEventAssignments")
+                .hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

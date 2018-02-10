@@ -55,6 +55,12 @@ public class RepositoryRelation {
     @Autowired
     private UserPreferenceRepository userPreferenceRepository;
 
+    @Autowired
+    private UserEventAssignmentRepository userEventAssignmentRepository;
+
+    @Autowired
+    private SessionAttendeeRepository sessionAttendeeRepository;
+
     @PostConstruct
     public void handleRepositoryRelations() {
         handleEventRepository();
@@ -64,6 +70,8 @@ public class RepositoryRelation {
         handleUserRoleRepository();
         handleUserRepository();
         handleUserPreferenceRepository();
+        handleUserEventAssignmentRepository();
+        handleSessionAttendeeRepository();
     }
 
     private void handleEventRepository() {
@@ -104,5 +112,16 @@ public class RepositoryRelation {
 
     private void handleUserPreferenceRepository() {
         userPreferenceRepository.addNestedRepository("notificationMethodPreferences[*].notificationTypesCovered", notificationTypeRepository);
+    }
+
+    private void handleUserEventAssignmentRepository() {
+        userEventAssignmentRepository.addNestedRepository("user", userRepository);
+        userEventAssignmentRepository.addNestedRepository("event", eventRepository);
+        userEventAssignmentRepository.addNestedRepository("roles", userRoleRepository);
+    }
+
+    private void handleSessionAttendeeRepository() {
+        sessionAttendeeRepository.addNestedRepository("user", userRepository);
+        sessionAttendeeRepository.addNestedRepository("session", sessionRepository);
     }
 }

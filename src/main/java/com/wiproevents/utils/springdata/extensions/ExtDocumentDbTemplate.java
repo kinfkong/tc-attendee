@@ -207,13 +207,21 @@ public class ExtDocumentDbTemplate extends DocumentDbTemplate implements ExtDocu
     private static String normalizeParamName(String param) {
         return param.replace(".", "_");
     }
+
+    private static Object normalizeValue(Object value) {
+        if (value.getClass().isEnum()) {
+            return value.toString();
+        }
+        return value;
+    }
     private static SqlQuerySpec createSqlQuerySpec(Query query, Paging paging) {
         String queryStr = "SELECT * FROM ROOT r WHERE 1=1";
         final SqlParameterCollection parameterCollection = new SqlParameterCollection();
 
         for (final Map.Entry<String, Object> entry : query.getCriteria().entrySet()) {
             queryStr += " AND r." + entry.getKey() + "=@" + normalizeParamName(entry.getKey());
-            parameterCollection.add(new SqlParameter("@" + normalizeParamName(entry.getKey()), entry.getValue()));
+            parameterCollection.add(new SqlParameter("@" + normalizeParamName(entry.getKey()),
+                    normalizeValue(entry.getValue())));
         }
         if (paging != null && paging.getSortColumn() != null) {
             SortOrder sortOrder = paging.getSortOrder();
@@ -233,7 +241,8 @@ public class ExtDocumentDbTemplate extends DocumentDbTemplate implements ExtDocu
 
         for (final Map.Entry<String, Object> entry : query.getCriteria().entrySet()) {
             queryStr += " AND r." + entry.getKey() + "=@" + normalizeParamName(entry.getKey());
-            parameterCollection.add(new SqlParameter("@" + normalizeParamName(entry.getKey()), entry.getValue()));
+            parameterCollection.add(new SqlParameter("@" + normalizeParamName(entry.getKey()),
+                    normalizeValue(entry.getValue())));
         }
 
         System.out.println("queryStr: " + queryStr);
