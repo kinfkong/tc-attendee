@@ -3,6 +3,7 @@ package com.wiproevents.controllers;
 import com.wiproevents.entities.ForgotPassword;
 import com.wiproevents.entities.NewPassword;
 import com.wiproevents.entities.User;
+import com.wiproevents.entities.VerifyEmailToken;
 import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;
@@ -59,7 +60,16 @@ public class SecurityController extends BaseEmailController {
     @RequestMapping(method = RequestMethod.POST, value = "signup")
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody User entity) throws AttendeeException {
-        return userService.create(entity);
+        User user =  userService.create(entity);
+        VerifyEmailToken verifyEmailToken = userService.createVerifyEmailToken(user.getId());
+        // send the email
+        Context context = new Context();
+
+        context.setVariable("user", user);
+        context.setVariable("verifyEmailToken", verifyEmailToken);
+
+        super.sendEmail(user.getEmail(), "signup", context);
+        return user;
     }
 
     /**
@@ -91,7 +101,7 @@ public class SecurityController extends BaseEmailController {
 
     @RequestMapping(method = RequestMethod.POST, value = "initiateForgotPassword")
     public boolean initiateForgotPassword(@RequestParam String email) throws AttendeeException {
-        Helper.checkNullOrEmpty("email", email);
+        Helper.checkNullOrEmpty(email, email);
         User user = userService.getUserByEmail(email);
         if (user == null) {
             throw new EntityNotFoundException("There is no user of email: " + email);
@@ -118,5 +128,11 @@ public class SecurityController extends BaseEmailController {
         userService.updatePasswordWithOldPassword(newPassword);
         return true;
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "verifyEmail")
+    public boolean verifyEmail(@RequestParam String email, @RequestParam String verificationToken) throws AttendeeException {
+        return userService.verifyEmail(email, verificationToken);
+    }
+
 }
 

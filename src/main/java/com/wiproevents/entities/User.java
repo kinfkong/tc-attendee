@@ -35,6 +35,7 @@ public class User extends AuditableEntity {
     private Designation designation;
     private String aboutMe;
     private String profilePictureURL;
+    private boolean emailVerified = false;
     /**
      * The user status.
      */

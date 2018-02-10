@@ -51,6 +51,13 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     @Autowired
     private ForgotPasswordRepository forgotPasswordRepository;
 
+
+    /**
+     * The verify email token repository for CRUD operations. Should be non-null after injection.
+     */
+    @Autowired
+    private VerifyEmailTokenRepository verifyEmailTokenRepository;
+
     /**
      * The forgot password repository for CRUD operations. Should be non-null after injection.
      */
@@ -192,6 +199,31 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     }
 
     /**
+     * This method is used to create the forgot password entity for the given user.
+     *
+     * @param userId the user id.
+     * @return the created forgot password entity
+     * @throws IllegalArgumentException if id is not positive
+     * @throws EntityNotFoundException if the entity does not exist
+     * @throws AccessDeniedException if does not allow to perform action
+     * @throws AttendeeException if any other error occurred during operation
+     */
+    @Transactional
+    @Override
+    public VerifyEmailToken createVerifyEmailToken(String userId) throws AttendeeException {
+        Helper.checkNullOrEmpty(userId, "userId");
+        VerifyEmailToken verifyEmailToken = new VerifyEmailToken();
+        String token = UUID.randomUUID().toString();
+        Date expiredOn = new Date(System.currentTimeMillis() + forgotPasswordExpirationTimeInMillis);
+        verifyEmailToken.setUserId(userId);
+        verifyEmailToken.setToken(token);
+        verifyEmailToken.setExpires(expiredOn);
+        return verifyEmailTokenRepository.save(verifyEmailToken);
+    }
+
+
+
+    /**
      * This method is used to update the forgot password entity for the given token.
      *
      * @param newPassword the newPassword request.
@@ -230,8 +262,8 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     @Override
     public boolean updatePasswordWithOldPassword(NewPassword newPassword) throws AttendeeException {
         Helper.checkNull(newPassword, "newPassword");
-        Helper.checkNullOrEmpty("old password", newPassword.getOldPassword());
-        Helper.checkNullOrEmpty("New password", newPassword.getNewPassword());
+        Helper.checkNullOrEmpty(newPassword.getOldPassword(), "Old Password");
+        Helper.checkNullOrEmpty(newPassword.getNewPassword(), "New password");
         User user = Helper.getAuthUser();
         if (!Helper.getPasswordEncoder().matches(newPassword.getOldPassword(), user.getPassword())) {
             throw new IllegalArgumentException("The old password is not correct");
@@ -348,6 +380,30 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
         socialUserService.create(socialUser);
 
         return existing;
+    }
+
+    @Override
+    public boolean verifyEmail(String email, String verificationToken) throws AttendeeException {
+        Helper.checkNullOrEmpty(email, "email");
+        Helper.checkNullOrEmpty(verificationToken, "verificationToken");
+        List<VerifyEmailToken> verifyEmailTokens = verifyEmailTokenRepository.findByToken(verificationToken);
+        if (verifyEmailTokens != null && verifyEmailTokens.size() > 0) {
+            VerifyEmailToken verifyEmailToken = verifyEmailTokens.get(0);
+            Date currentDate = new Date();
+            if (currentDate.before(verifyEmailToken.getExpires())) {
+                User user = get(verifyEmailToken.getUserId());
+                if (!email.equals(user.getEmail())) {
+                    throw new IllegalArgumentException("The token is not bind with this email.");
+                }
+                user.setEmailVerified(true);
+                getRepository().save(user);
+                verifyEmailTokenRepository.delete(verifyEmailToken.getId());
+                return true;
+            }
+        } else {
+            throw new IllegalArgumentException("Token is not correct");
+        }
+        return false;
     }
 }
 

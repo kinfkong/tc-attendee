@@ -1,1 +1,0 @@
-New Mentee created for ${parentConsent.parentName}!

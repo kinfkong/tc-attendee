@@ -5,6 +5,8 @@ import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.EntityNotFoundException;
 import com.wiproevents.exceptions.AttendeeException;
 
+import javax.transaction.Transactional;
+
 /**
  * The user service. Extends generic service interface.Implementation should be effectively thread-safe.
  */
@@ -20,6 +22,9 @@ public interface UserService extends GenericService<User, UserSearchCriteria> {
      * @throws AttendeeException if any other error occurred during operation
      */
     ForgotPassword forgotPassword(String userId) throws AttendeeException;
+
+    @Transactional
+    VerifyEmailToken createVerifyEmailToken(String userId) throws AttendeeException;
 
     /**
      * This method is used to update the forgot password entity for the given token.
@@ -55,5 +60,7 @@ public interface UserService extends GenericService<User, UserSearchCriteria> {
     User getUserBySocial(String providerId, String providerUserId) throws AttendeeException;
 
     User createSocialUser(SocialUser socialUser, User user) throws AttendeeException;
+
+    boolean verifyEmail(String email, String verificationToken) throws AttendeeException;
 }
 

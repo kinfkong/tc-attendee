@@ -12,4 +12,5 @@ import lombok.Setter;
 @Document(collection = "verify_email_token")
 public class VerifyEmailToken extends Token {
     private String email;
+    private String userId;
 }
