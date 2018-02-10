@@ -1,0 +1,14 @@
+{
+  "notificationMethodPreferences": [
+    {
+      "notificationTypesCovered": [
+        {
+          "id": "5b725233-b50e-2161-bfe6-41a861e23fb7"
+        }
+      ],
+      "notificationMethod": "SMS"
+    }
+  ],
+  "rooms": ["room1"],
+  "food": ["fish", "meat"]
+}

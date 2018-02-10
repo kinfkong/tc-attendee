@@ -1,7 +1,6 @@
 package com.wiproevents.services.springdata;
 
 import com.wiproevents.entities.BaseSearchCriteria;
-import com.wiproevents.entities.NotificationType;
 import com.wiproevents.entities.UserPreference;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.EntityNotFoundException;
@@ -10,7 +9,6 @@ import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,7 +30,8 @@ public class UserPreferenceServiceImpl extends BaseService<UserPreference, BaseS
         if (userPreferences.isEmpty()) {
             throw new EntityNotFoundException("no user preference found");
         }
-        return userPreferences.get(0);
+        // populate it use get
+        return this.get(userPreferences.get(0).getId());
     }
 
     @Override
@@ -42,23 +41,15 @@ public class UserPreferenceServiceImpl extends BaseService<UserPreference, BaseS
 
     @Override
     public UserPreference update(String id, UserPreference entity) throws AttendeeException {
-
         // update the nested lookup fields
         entity.getNotificationMethodPreferences().forEach(notification -> {
             // make sure the user id is correct
+            if (notification.getUserId() == null) {
+                notification.setUserId(entity.getUserId());
+            }
             if (!notification.getUserId().equals(entity.getUserId())) {
                 throw new IllegalArgumentException("The user id in notification method preference is not correct.");
             }
-            ArrayList<NotificationType> dbNotificationTypes = new ArrayList<>();
-            notification.getNotificationTypesCovered().forEach(notificationType -> {
-                NotificationType dbNotificationType = notificationTypeRepository.findOne(notificationType.getId());
-                if (dbNotificationType == null) {
-                    throw new IllegalArgumentException(
-                            "notification type of id: " + notificationType.getId() + " not exists");
-                }
-                dbNotificationTypes.add(dbNotificationType);
-            });
-            notification.setNotificationTypesCovered(dbNotificationTypes);
         });
 
         return super.update(id, entity);

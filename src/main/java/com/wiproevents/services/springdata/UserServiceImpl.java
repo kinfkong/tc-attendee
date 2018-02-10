@@ -1,5 +1,7 @@
 package com.wiproevents.services.springdata;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.AttendeeException;
@@ -10,12 +12,15 @@ import com.wiproevents.services.UserService;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import com.wiproevents.utils.springdata.extensions.SearchResult;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -73,9 +78,10 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    @Autowired
-    public UserServiceImpl() {
-    }
+    @Value("${user.defaultPreferenceFile}")
+    private String userDefaultPreferenceFile;
+
+    private GsonBuilder gsonBuilder = new GsonBuilder();
 
     /**
      * Check if all required fields are initialized properly.
@@ -90,6 +96,7 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
         Helper.checkConfigPositive(forgotPasswordExpirationTimeInMillis,
                 "forgotPasswordExpirationTimeInMillis");
         Helper.checkConfigPositive(tokenExpirationTimeInMillis, "tokenExpirationTimeInMillis");
+        Helper.checkConfigNotNull(userDefaultPreferenceFile, "userDefaultPreferenceFile");
     }
 
     /**
@@ -137,6 +144,19 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
 
         // create the user preference for the new user
         UserPreference userPreference = new UserPreference();
+
+        try {
+            InputStream in = getClass().getResourceAsStream(this.userDefaultPreferenceFile);
+            String preferenceContent = IOUtils.toString(in, "UTF-8");
+            Gson gson = gsonBuilder.create();
+            userPreference = gson.fromJson(preferenceContent, UserPreference.class);
+        } catch (IOException e) {
+           // ignore and use empty preference
+        }
+
+        userPreference.setCreatedOn(new Date());
+        userPreference.setUpdatedOn(new Date());
+
         userPreference.setUserId(result.getId());
 
         // save the user preference

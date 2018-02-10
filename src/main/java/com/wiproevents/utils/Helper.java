@@ -10,6 +10,7 @@ import com.wiproevents.entities.*;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.security.CustomUserDetails;
 import com.wiproevents.security.UserAuthentication;
+import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 
@@ -459,5 +461,28 @@ public class Helper {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static  Object getPropertyExt(PropertyUtilsBean beanUtils, Object entity, String path) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        if (path.startsWith(".")) {
+            path = path.substring(1);
+        }
+        int t = path.indexOf("[*]");
+        if (t >= 0) {
+            String pre = path.substring(0, t);
+            String suf = path.substring(t + "[*]".length());
+            List<Object> result = new ArrayList<>();
+            List<Object> list = (List<Object>) beanUtils.getProperty(entity, pre);
+            if (list == null) {
+                result = null;
+            } else {
+                for (Object item : list) {
+                    result.add(getPropertyExt(beanUtils, item, suf));
+                }
+            }
+            return result;
+        } else {
+            return beanUtils.getProperty(entity, path);
+        }
+    }
 
 }

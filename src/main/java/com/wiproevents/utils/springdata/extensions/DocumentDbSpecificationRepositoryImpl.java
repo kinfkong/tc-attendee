@@ -72,7 +72,7 @@ public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> e
             DocumentDbRepository<?, ID> pathRepository = this.nestedRepositories.get(path);
             // get value from the build
             try {
-                Object value = getPropertyExt(entity, path);
+                Object value = Helper.getPropertyExt(beanUtils, entity, path);
 
                 Object populatedValue = populateReference(path, value, pathRepository);
 
@@ -81,30 +81,6 @@ public class DocumentDbSpecificationRepositoryImpl<T, ID extends Serializable> e
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new IllegalStateException("failed to read: " + path + " from class: " + entity.getClass());
             }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object getPropertyExt(Object entity, String path) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        if (path.startsWith(".")) {
-            path = path.substring(1);
-        }
-        int t = path.indexOf("[*]");
-        if (t >= 0) {
-            String pre = path.substring(0, t);
-            String suf = path.substring(t + "[*]".length());
-            List<Object> result = new ArrayList<>();
-            List<Object> list = (List<Object>) beanUtils.getProperty(entity, pre);
-            if (list == null) {
-                result = null;
-            } else {
-                for (Object item : list) {
-                    result.add(getPropertyExt(item, suf));
-                }
-            }
-            return result;
-        } else {
-            return beanUtils.getProperty(entity, path);
         }
     }
 

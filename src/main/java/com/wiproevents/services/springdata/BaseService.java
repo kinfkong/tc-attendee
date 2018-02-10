@@ -243,7 +243,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
             DocumentDbRepository<?, String> pathRepository = repositories.get(path);
             // get value from the build
             try {
-                Object value = beanUtils.getProperty(entity, path);
+                Object value = Helper.getPropertyExt(beanUtils, entity, path);
 
                 validateReference(path, value, pathRepository);
 

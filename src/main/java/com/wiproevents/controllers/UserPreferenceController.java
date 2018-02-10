@@ -74,6 +74,9 @@ public class UserPreferenceController {
         User user = Helper.getAuthUser();
 
         UserPreference userPreference = userPreferenceService.findByUserId(user.getId());
+        entity.setUserId(user.getId());
+        entity.setId(userPreference.getId());
+
         if (!userPreference.getUserId().equals(user.getId())) {
             throw new IllegalArgumentException("the user id is not correct.");
         }
