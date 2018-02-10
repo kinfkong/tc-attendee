@@ -44,6 +44,9 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
     @Value("${token.expirationTimeInMillis}")
     private long tokenExpirationTimeInMillis;
 
+    @Value("${user.defaultRoleName}")
+    private String defaultUserRoleName;
+
     @Autowired
     private SocialUserService socialUserService;
 
@@ -65,6 +68,9 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
 
     @Autowired
     private UserPreferenceRepository userPreferenceRepository;
+
+    @Autowired
+    private UserRoleRepository userRoleRepository;
 
     @Autowired
     public UserServiceImpl() {
@@ -116,6 +122,16 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
                 throw new IllegalArgumentException("The email has been registered.");
             }
         }
+
+        // create the user role, set to the normal "USER" role first
+        List<UserRole> list = userRoleRepository.findByName(defaultUserRoleName);
+        if (list.size() == 0) {
+            throw new AttendeeException("Cannot find the role with name [" + defaultUserRoleName + "]." +
+                    " please set the user_role in database correctly.");
+        }
+
+        entity.setRoles(list);
+        entity.setStatus(UserStatus.ACTIVE);
 
         User result = super.create(entity);
 
@@ -270,7 +286,8 @@ public class UserServiceImpl extends BaseService<User, UserSearchCriteria> imple
         if (users.size() == 0) {
             return null;
         }
-        return users.get(0);
+        // populate the fields use get
+        return this.get(users.get(0).getId());
     }
 
     @Override

@@ -95,7 +95,7 @@ public class SocialConnectController implements InitializingBean {
 
     /**
      * Configure the list of connect interceptors that should receive callbacks during the connection process.
-     * Convenient when an instance of this class is configured using a tool that supports JavaBeans-based configuration.
+     * Convenient when an instance of this class is configured using a dbtool that supports JavaBeans-based configuration.
      * @param interceptors the connect interceptors to add
      * @deprecated Use {@link #setConnectInterceptors(List)} instead.
      */
@@ -106,7 +106,7 @@ public class SocialConnectController implements InitializingBean {
 
     /**
      * Configure the list of connect interceptors that should receive callbacks during the connection process.
-     * Convenient when an instance of this class is configured using a tool that supports JavaBeans-based configuration.
+     * Convenient when an instance of this class is configured using a dbtool that supports JavaBeans-based configuration.
      * @param interceptors the connect interceptors to add
      */
     public void setConnectInterceptors(List<ConnectInterceptor<?>> interceptors) {
@@ -117,7 +117,7 @@ public class SocialConnectController implements InitializingBean {
 
     /**
      * Configure the list of discconnect interceptors that should receive callbacks when connections are removed.
-     * Convenient when an instance of this class is configured using a tool that supports JavaBeans-based configuration.
+     * Convenient when an instance of this class is configured using a dbtool that supports JavaBeans-based configuration.
      * @param interceptors the connect interceptors to add
      */
     public void setDisconnectInterceptors(List<DisconnectInterceptor<?>> interceptors) {

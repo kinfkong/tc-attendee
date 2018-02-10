@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.web.DefaultErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -26,7 +27,9 @@ import java.util.UUID;
  * The main application.
  */
 @SpringBootApplication(exclude = SocialWebAutoConfiguration.class)
-@ComponentScan(basePackages = {"com.wiproevents"})
+@ComponentScan(basePackages = {"com.wiproevents"}, excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.wiproevents.dbtool.*")
+})
 public class Application {
     /**
      * The request id listener.

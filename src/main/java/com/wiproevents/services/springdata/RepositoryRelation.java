@@ -40,12 +40,20 @@ public class RepositoryRelation {
     @Autowired
     private FileCategoryRepository fileCategoryRepository;
 
+    @Autowired
+    private UserRoleRepository userRoleRepository;
+
+    @Autowired
+    private UserPermissionRepository userPermissionRepository;
+
     @PostConstruct
     public void handleRepositoryRelations() {
         handleEventRepository();
         handleEventCategoryRepository();
         handleEventDayAgendaRepository();
         handleSessionRepository();
+        handleUserRoleRepository();
+        handleUserRepository();
     }
 
     private void handleEventRepository() {
@@ -73,5 +81,13 @@ public class RepositoryRelation {
         sessionRepository.addNestedRepository("assignedSpeakers", userRepository);
         sessionRepository.addNestedRepository("files[*].files", fileEntityRepository);
         sessionRepository.addNestedRepository("files[*].category", fileCategoryRepository);
+    }
+
+    private void handleUserRoleRepository() {
+        userRoleRepository.addNestedRepository("permissions", userPermissionRepository);
+    }
+
+    private void handleUserRepository() {
+        userRepository.addNestedRepository("roles", userRoleRepository);
     }
 }

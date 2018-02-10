@@ -4,11 +4,8 @@
  * license information.
  */
 
-package com.wiproevents;
+package com.wiproevents.dbtool;
 
-import com.wiproevents.utils.springdata.extensions.ExtDocumentDbRepositoryFactoryBean;
-import com.wiproevents.utils.springdata.extensions.ExtDocumentDbTemplate;
-import com.wiproevents.utils.springdata.extensions.ExtMappingDocumentDbConverter;
 import com.microsoft.azure.documentdb.ConnectionPolicy;
 import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.DocumentClient;
@@ -16,13 +13,16 @@ import com.microsoft.azure.spring.data.documentdb.config.AbstractDocumentDbConfi
 import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import com.microsoft.azure.spring.data.documentdb.core.convert.MappingDocumentDbConverter;
 import com.microsoft.azure.spring.data.documentdb.repository.config.EnableDocumentDbRepositories;
+import com.wiproevents.utils.springdata.extensions.ExtDocumentDbRepositoryFactoryBean;
+import com.wiproevents.utils.springdata.extensions.ExtDocumentDbTemplate;
+import com.wiproevents.utils.springdata.extensions.ExtMappingDocumentDbConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableDocumentDbRepositories(repositoryFactoryBeanClass = ExtDocumentDbRepositoryFactoryBean.class)
-public class AppConfiguration extends AbstractDocumentDbConfiguration {
+public class DatabaseConfig extends AbstractDocumentDbConfiguration {
 
     @Value("${azure.documentdb.uri}")
     private String uri;

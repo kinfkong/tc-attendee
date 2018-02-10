@@ -161,7 +161,10 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
             }
         }
 
-        return repository.save(entity);
+        repository.save(entity);
+
+        // for population
+        return get(entity.getId());
     }
 
     /**
@@ -190,7 +193,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S> {
      * @throws AttendeeException if any other error occurred during operation
      */
     public SearchResult<T> search(S criteria, Paging paging) throws AttendeeException {
-        SearchResult<T> result = repository.findAll(getSpecification(criteria), paging);
+        SearchResult<T> result = repository.findAll(getSpecification(criteria), paging, true);
         for (T item : result.getEntities()) {
             handlePopulate(item);
         }
