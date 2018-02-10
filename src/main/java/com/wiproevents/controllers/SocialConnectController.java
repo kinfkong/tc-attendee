@@ -46,6 +46,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UrlPathHelper;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
@@ -99,6 +100,12 @@ public class SocialConnectController {
      */
     public void setSessionStrategy(SessionStrategy sessionStrategy) {
         this.sessionStrategy = sessionStrategy;
+    }
+    // From InitializingBean
+
+    @PostConstruct
+    public void afterPropertiesSet() throws Exception {
+        this.connectSupport = new ConnectSupport(sessionStrategy);
     }
 
 
@@ -245,7 +252,7 @@ public class SocialConnectController {
      * @param request the NativeWebRequest used to access the servlet path when constructing the redirect path.
      * @return a RedirectView to the page to be displayed after a connection is created or deleted
      */
-    protected RedirectView connectionStatusRedirect(String providerId, NativeWebRequest request, User user, Exception e) {
+    private RedirectView connectionStatusRedirect(String providerId, NativeWebRequest request, User user, Exception e) {
         String path = resultUrl;
         try {
             if (e != null) {
