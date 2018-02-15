@@ -25,7 +25,7 @@ public class UserSpecification implements DocumentDbSpecification<User> {
 
         Helper.buildEqualPredict(query, values, "fullName", this.criteria.getFullName());
         Helper.buildEqualPredict(query, values, "email", this.criteria.getEmail());
-
+        Helper.buildEqualPredict(query, values, "status", this.criteria.getStatus());
         return query;
     }
 }

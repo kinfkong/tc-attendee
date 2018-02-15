@@ -336,6 +336,15 @@ public class Helper {
         return query;
     }
 
+    public static Query buildLessEqualPredict(Query query, Map<String, Object> values, String key, Object value) {
+        if (value != null) {
+            values.put(key, value);
+            query.addCriteria(Criteria.where(key, values));
+        }
+        return query;
+    }
+
+
 
     /**
      * Get id of entity.

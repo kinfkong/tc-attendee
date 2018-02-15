@@ -23,6 +23,8 @@ public class UserSearchCriteria {
     /**
      * The role.
      */
-    private UserRole role;
+    private String userRoleId;
+
+    private UserStatus status;
 }
 

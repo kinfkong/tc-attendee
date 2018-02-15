@@ -14,6 +14,7 @@ import java.util.Date;
 public class SessionSearchCriteria extends BaseSearchCriteria {
     private String name;
     private String dayAgendaId;
+    private String eventId;
     private Date startDateBefore;
     private Date startDateAfter;
     private Date endDateBefore;
