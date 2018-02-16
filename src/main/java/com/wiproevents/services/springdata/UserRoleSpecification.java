@@ -2,7 +2,7 @@ package com.wiproevents.services.springdata;
 
 import com.microsoft.azure.spring.data.documentdb.core.query.Query;
 import com.wiproevents.entities.UserRole;
-import com.wiproevents.entities.UserRoleSearchCriteria;
+import com.wiproevents.entities.criteria.UserRoleSearchCriteria;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import lombok.AllArgsConstructor;

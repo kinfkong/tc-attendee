@@ -1,5 +1,6 @@
 package com.wiproevents.entities;
 
+import com.wiproevents.entities.types.NotificationType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

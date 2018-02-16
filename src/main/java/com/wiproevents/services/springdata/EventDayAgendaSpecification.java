@@ -2,7 +2,7 @@ package com.wiproevents.services.springdata;
 
 import com.microsoft.azure.spring.data.documentdb.core.query.Query;
 import com.wiproevents.entities.EventDayAgenda;
-import com.wiproevents.entities.EventDayAgendaSearchCriteria;
+import com.wiproevents.entities.criteria.EventDayAgendaSearchCriteria;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import lombok.AllArgsConstructor;

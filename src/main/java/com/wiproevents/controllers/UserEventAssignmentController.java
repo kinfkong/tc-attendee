@@ -1,8 +1,7 @@
 package com.wiproevents.controllers;
 
-import com.wiproevents.entities.Session;
 import com.wiproevents.entities.UserEventAssignment;
-import com.wiproevents.entities.UserEventAssignmentSearchCriteria;
+import com.wiproevents.entities.criteria.UserEventAssignmentSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.UserEventAssignmentService;
 import com.wiproevents.utils.Helper;

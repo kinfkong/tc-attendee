@@ -1,8 +1,8 @@
 package com.wiproevents.services.springdata;
 
 import com.wiproevents.entities.SessionAttendee;
-import com.wiproevents.entities.SessionAttendeeSearchCriteria;
-import com.wiproevents.entities.SessionAttendeeStatus;
+import com.wiproevents.entities.criteria.SessionAttendeeSearchCriteria;
+import com.wiproevents.entities.statuses.SessionAttendeeStatus;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.SessionAttendeeService;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;

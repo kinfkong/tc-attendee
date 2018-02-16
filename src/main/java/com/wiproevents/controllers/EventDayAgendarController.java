@@ -2,7 +2,7 @@ package com.wiproevents.controllers;
 
 
 import com.wiproevents.entities.EventDayAgenda;
-import com.wiproevents.entities.EventDayAgendaSearchCriteria;
+import com.wiproevents.entities.criteria.EventDayAgendaSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.EventDayAgendaService;
 import com.wiproevents.utils.Helper;

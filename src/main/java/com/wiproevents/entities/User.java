@@ -2,6 +2,7 @@ package com.wiproevents.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
+import com.wiproevents.entities.statuses.UserStatus;
 import lombok.Getter;
 import lombok.Setter;
 

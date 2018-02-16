@@ -1,6 +1,6 @@
 package com.wiproevents.services.springdata;
 
-import com.wiproevents.entities.NotificationType;
+import com.wiproevents.entities.types.NotificationType;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationRepository;
 
 /**

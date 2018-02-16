@@ -3,7 +3,7 @@ package com.wiproevents.controllers;
 import com.wiproevents.entities.ForgotPassword;
 import com.wiproevents.entities.NewPassword;
 import com.wiproevents.entities.User;
-import com.wiproevents.entities.UserSearchCriteria;
+import com.wiproevents.entities.criteria.UserSearchCriteria;
 import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.ConfigurationException;

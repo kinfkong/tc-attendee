@@ -1,12 +1,9 @@
 package com.wiproevents.services.springdata;
 
-import com.wiproevents.entities.Session;
-import com.wiproevents.entities.SessionSearchCriteria;
 import com.wiproevents.entities.SocialUser;
-import com.wiproevents.entities.SocialUserSearchCriteria;
+import com.wiproevents.entities.criteria.SocialUserSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.SocialUserService;
-import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import org.springframework.stereotype.Service;
 

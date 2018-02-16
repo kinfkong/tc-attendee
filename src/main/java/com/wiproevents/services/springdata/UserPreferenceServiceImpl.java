@@ -1,6 +1,6 @@
 package com.wiproevents.services.springdata;
 
-import com.wiproevents.entities.BaseSearchCriteria;
+import com.wiproevents.entities.criteria.BaseSearchCriteria;
 import com.wiproevents.entities.UserPreference;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.exceptions.EntityNotFoundException;

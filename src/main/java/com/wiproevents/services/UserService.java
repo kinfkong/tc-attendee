@@ -1,6 +1,7 @@
 package com.wiproevents.services;
 
 import com.wiproevents.entities.*;
+import com.wiproevents.entities.criteria.UserSearchCriteria;
 import com.wiproevents.exceptions.AccessDeniedException;
 import com.wiproevents.exceptions.EntityNotFoundException;
 import com.wiproevents.exceptions.AttendeeException;

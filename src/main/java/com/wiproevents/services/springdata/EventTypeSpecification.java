@@ -1,8 +1,8 @@
 package com.wiproevents.services.springdata;
 
 import com.microsoft.azure.spring.data.documentdb.core.query.Query;
-import com.wiproevents.entities.EventType;
-import com.wiproevents.entities.EventTypeSearchCriteria;
+import com.wiproevents.entities.types.EventType;
+import com.wiproevents.entities.criteria.EventTypeSearchCriteria;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import lombok.AllArgsConstructor;

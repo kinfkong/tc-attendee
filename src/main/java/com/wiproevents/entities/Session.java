@@ -1,6 +1,7 @@
 package com.wiproevents.entities;
 
 import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
+import com.wiproevents.entities.briefs.EventBrief;
 import lombok.Getter;
 import lombok.Setter;
 

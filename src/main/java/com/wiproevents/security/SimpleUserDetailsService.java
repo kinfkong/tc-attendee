@@ -4,7 +4,7 @@ package com.wiproevents.security;
 import com.wiproevents.entities.User;
 import com.wiproevents.entities.UserPermission;
 import com.wiproevents.entities.UserRole;
-import com.wiproevents.entities.UserStatus;
+import com.wiproevents.entities.statuses.UserStatus;
 import com.wiproevents.exceptions.ConfigurationException;
 import com.wiproevents.services.UserService;
 

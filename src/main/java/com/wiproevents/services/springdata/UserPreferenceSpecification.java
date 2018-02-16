@@ -1,7 +1,7 @@
 package com.wiproevents.services.springdata;
 
 import com.microsoft.azure.spring.data.documentdb.core.query.Query;
-import com.wiproevents.entities.BaseSearchCriteria;
+import com.wiproevents.entities.criteria.BaseSearchCriteria;
 import com.wiproevents.entities.UserPreference;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import lombok.AllArgsConstructor;

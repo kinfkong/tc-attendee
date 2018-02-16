@@ -1,7 +1,7 @@
 package com.wiproevents.services;
 
 import com.wiproevents.entities.EventDayAgenda;
-import com.wiproevents.entities.EventDayAgendaSearchCriteria;
+import com.wiproevents.entities.criteria.EventDayAgendaSearchCriteria;
 
 /**
  * The lookup service.Implementation should be effectively thread-safe.

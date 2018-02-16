@@ -1,7 +1,7 @@
 package com.wiproevents.services;
 
 import com.wiproevents.entities.SessionAttendee;
-import com.wiproevents.entities.SessionAttendeeSearchCriteria;
+import com.wiproevents.entities.criteria.SessionAttendeeSearchCriteria;
 
 /**
  * The user service. Extends generic service interface.Implementation should be effectively thread-safe.

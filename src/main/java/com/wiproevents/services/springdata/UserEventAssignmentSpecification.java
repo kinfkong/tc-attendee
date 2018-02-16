@@ -2,7 +2,7 @@ package com.wiproevents.services.springdata;
 
 import com.microsoft.azure.spring.data.documentdb.core.query.Query;
 import com.wiproevents.entities.UserEventAssignment;
-import com.wiproevents.entities.UserEventAssignmentSearchCriteria;
+import com.wiproevents.entities.criteria.UserEventAssignmentSearchCriteria;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;
 import lombok.AllArgsConstructor;

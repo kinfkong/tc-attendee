@@ -1,7 +1,7 @@
 package com.wiproevents.services.springdata;
 
 import com.wiproevents.entities.UserEventAssignment;
-import com.wiproevents.entities.UserEventAssignmentSearchCriteria;
+import com.wiproevents.entities.criteria.UserEventAssignmentSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.UserEventAssignmentService;
 import com.wiproevents.services.UserService;

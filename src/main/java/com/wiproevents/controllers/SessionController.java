@@ -1,7 +1,7 @@
 package com.wiproevents.controllers;
 
 import com.wiproevents.entities.Session;
-import com.wiproevents.entities.SessionSearchCriteria;
+import com.wiproevents.entities.criteria.SessionSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.SessionService;
 import com.wiproevents.utils.Helper;

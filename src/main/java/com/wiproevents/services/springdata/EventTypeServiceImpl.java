@@ -1,7 +1,7 @@
 package com.wiproevents.services.springdata;
 
-import com.wiproevents.entities.EventType;
-import com.wiproevents.entities.EventTypeSearchCriteria;
+import com.wiproevents.entities.types.EventType;
+import com.wiproevents.entities.criteria.EventTypeSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.EventTypeService;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecification;

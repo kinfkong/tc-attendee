@@ -1,5 +1,6 @@
 package com.wiproevents.entities;
 
+import com.wiproevents.entities.briefs.EventBrief;
 import lombok.Getter;
 import lombok.Setter;
 

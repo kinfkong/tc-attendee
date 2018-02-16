@@ -2,8 +2,7 @@ package com.wiproevents.controllers;
 
 
 import com.wiproevents.entities.EventCategory;
-import com.wiproevents.entities.EventCategorySearchCriteria;
-import com.wiproevents.entities.EventType;
+import com.wiproevents.entities.criteria.EventCategorySearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.EventCategoryService;
 import com.wiproevents.utils.Helper;

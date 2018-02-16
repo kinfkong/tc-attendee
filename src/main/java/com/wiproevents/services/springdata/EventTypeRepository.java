@@ -1,6 +1,6 @@
 package com.wiproevents.services.springdata;
 
-import com.wiproevents.entities.EventType;
+import com.wiproevents.entities.types.EventType;
 import com.wiproevents.utils.springdata.extensions.DocumentDbSpecificationRepository;
 import org.springframework.stereotype.Repository;
 

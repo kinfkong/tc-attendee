@@ -1,8 +1,7 @@
 package com.wiproevents.controllers;
 
-import com.wiproevents.entities.Session;
 import com.wiproevents.entities.UserRole;
-import com.wiproevents.entities.UserRoleSearchCriteria;
+import com.wiproevents.entities.criteria.UserRoleSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.UserRoleService;
 import com.wiproevents.utils.Helper;

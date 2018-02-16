@@ -1,6 +1,7 @@
 package com.wiproevents.services;
 
 import com.wiproevents.entities.*;
+import com.wiproevents.entities.criteria.EventSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 
 import java.util.List;

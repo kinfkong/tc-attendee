@@ -1,9 +1,9 @@
 package com.wiproevents.services.springdata;
 
 import com.wiproevents.entities.EventDayAgenda;
-import com.wiproevents.entities.EventDayAgendaSearchCriteria;
+import com.wiproevents.entities.criteria.EventDayAgendaSearchCriteria;
 import com.wiproevents.entities.Session;
-import com.wiproevents.entities.SessionSearchCriteria;
+import com.wiproevents.entities.criteria.SessionSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
 import com.wiproevents.services.EventDayAgendaService;
 import com.wiproevents.services.SessionService;

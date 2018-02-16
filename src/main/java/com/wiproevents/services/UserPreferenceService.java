@@ -1,6 +1,6 @@
 package com.wiproevents.services;
 
-import com.wiproevents.entities.BaseSearchCriteria;
+import com.wiproevents.entities.criteria.BaseSearchCriteria;
 import com.wiproevents.entities.UserPreference;
 import com.wiproevents.exceptions.AttendeeException;
 
