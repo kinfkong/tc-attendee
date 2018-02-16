@@ -4,6 +4,7 @@ package com.wiproevents.controllers;
 import com.wiproevents.entities.*;
 import com.wiproevents.entities.criteria.EventSearchCriteria;
 import com.wiproevents.exceptions.AttendeeException;
+import com.wiproevents.services.EventFAQService;
 import com.wiproevents.services.EventService;
 import com.wiproevents.utils.Helper;
 import com.wiproevents.utils.springdata.extensions.Paging;
@@ -17,6 +18,9 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.List;
 
+import static org.json.XMLTokener.entity;
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 /**
  * The Task REST controller. Is effectively thread safe.
  */
@@ -29,6 +33,9 @@ public class EventController {
      */
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private EventFAQService eventFAQService;
 
     /**
      * Check if all required fields are initialized properly.
@@ -160,6 +167,73 @@ public class EventController {
     public SearchResult<Event> search(@ModelAttribute EventSearchCriteria criteria,
                                           @ModelAttribute Paging paging) throws AttendeeException  {
         return eventService.search(criteria, paging);
+    }
+
+
+
+
+    /**
+     * This method is used to create an entity.
+     *
+     * @param entity the entity to create
+     * @param documents the documents
+     * @return the created entity
+     * @throws IllegalArgumentException if entity is null or not valid
+     * @throws AttendeeException if any other error occurred during operation
+     */
+    @RequestMapping(value = "{eventId}/eventFAQ", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
+    public EventFAQ createEventFAQ(@PathVariable String eventId, @RequestBody EventFAQ entity) throws AttendeeException  {
+        return eventFAQService.createByEventId(eventId, entity);
+    }
+
+    /**
+     * This method is used to update an entity.
+     *
+     * @param id the id of the entity to update
+     * @param entity the entity to update
+     * @param documents the documents to upload
+     * @return the updated entity
+     * @throws IllegalArgumentException if id is not positive or entity is null or id of entity is not positive
+     * or id of  entity not match id or entity is invalid
+     * @throws EntityNotFoundException if the entity does not exist
+     * @throws AttendeeException if any other error occurred during operation
+     */
+    @RequestMapping(value = "{eventId}/eventFAQ", method = RequestMethod.PUT)
+    @Transactional
+    public EventFAQ updateEventFAQ(@PathVariable String eventId, @RequestBody EventFAQ entity) throws AttendeeException  {
+        return eventFAQService.updateByEventId(eventId, entity);
+    }
+
+
+    /**
+     * This method is used to retrieve an entity.
+     *
+     * @param id the id of the entity to retrieve
+     * @return the match entity
+     * @throws IllegalArgumentException if id is not positive
+     * @throws EntityNotFoundException if the entity does not exist
+     * @throws AttendeeException if any other error occurred during operation
+     */
+    @RequestMapping(value = "{eventId}/eventFAQ", method = RequestMethod.GET)
+    public EventFAQ getEventFAQ(@PathVariable String eventId) throws AttendeeException {
+        return eventFAQService.getByEventId(eventId);
+    }
+
+
+    /**
+     * This method is used to delete an entity.
+     *
+     * @param id the id of the entity to delete
+     * @throws IllegalArgumentException if id is not positive
+     * @throws EntityNotFoundException if the entity does not exist
+     * @throws AttendeeException if any other error occurred during operation
+     */
+    @RequestMapping(value = "{eventId}/eventFAQ", method = RequestMethod.DELETE)
+    @Transactional
+    public void deleteEventFAQ(@PathVariable String eventId) throws AttendeeException  {
+        eventFAQService.deleteByEventId(eventId);
     }
 }
 

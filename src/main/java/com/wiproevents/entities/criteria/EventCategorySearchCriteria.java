@@ -1,12 +1,17 @@
+/*
+ * Copyright (c) 2018 TopCoder, Inc. All rights reserved.
+ */
 package com.wiproevents.entities.criteria;
 
-import com.wiproevents.entities.criteria.BaseSearchCriteria;
 import lombok.Getter;
 import lombok.Setter;
 
 
 /**
- * The user search criteria.
+ * The event category search criteria.
+ *
+ * @author TCSDEVELOPER
+ * @version 1.0
  */
 @Getter
 @Setter
