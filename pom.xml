@@ -3,12 +3,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.wiproevents</groupId>
-    <artifactId>attendee-rest-api</artifactId>
+    <artifactId>attendee-rest-api-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
-    <name>attendee-rest-api</name>
+    <name>attendee-rest-api-parent</name>
+    <packaging>pom</packaging>
     <url>http://maven.apache.org</url>
+
+    <modules>
+        <module>shared</module>
+        <module>dbtool</module>
+        <module>microservice1</module>
+        <module>microservice2</module>
+    </modules>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -37,7 +43,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <server.port>${env.PORT}</server.port>
+
         <azure.documentdb.uri>${env.COSMOS_DB_URI}</azure.documentdb.uri>
         <azure.documentdb.key>${env.COSMOS_DB_KEY}</azure.documentdb.key>
         <azure.documentdb.database>${env.COSMOS_DB_NAME}</azure.documentdb.database>
@@ -197,34 +203,17 @@
     </dependencies>
 
     <build>
-        <finalName>attendee-rest-api</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>
-                    <executable>true</executable>
-                    <layout>ZIP</layout>
-                    <mainClass>com.wiproevents.Application</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.17</version>
-                <configuration>
-                    <linkXRef>false</linkXRef>
-                    <configLocation>checkstyle.xml</configLocation>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>
