@@ -1,21 +1,17 @@
 package com.wiproevents.entities;
 
-import com.wiproevents.entities.statuses.PollStatus;
-import com.wiproevents.entities.types.PollType;
+import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
+import com.wiproevents.entities.questions.PollQuestion;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by wangjinggang on 2018/2/15.
- */
-public class Poll extends IdentifiableEntity {
-    private String name;
-    private String eventId;
-    private String context;
-    private String sessionId;
-    private PollStatus status;
-    private PollType type;
-    private Date startTime;
-    private Date endTime;
 
+@Getter
+@Setter
+@Document(collection = "poll")
+public class Poll extends BaseEngagement {
+    private List<PollQuestion> questions = new ArrayList<>();
 }
