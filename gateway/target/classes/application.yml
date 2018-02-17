@@ -1,0 +1,28 @@
+zuul:
+  routes:
+    userNotes:
+      path: /userNotes/**
+      serviceId: microservice2
+      sensitiveHeaders:
+    others:
+      path: /**
+      serviceId: microservice1
+      sensitiveHeaders:
+
+microservice1:
+  ribbon:
+    listOfServers: http://localhost:8081
+    connectTimeout: 10000
+    ReadTimeout: 180000
+
+microservice2:
+  ribbon:
+    listOfServers: http://localhost:8082
+    connectTimeout: 10000
+    ReadTimeout: 180000
+
+hystrix.command.default.execution.timeout.enabled: false
+
+ribbon:
+  eureka:
+    enabled: false
