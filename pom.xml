@@ -24,23 +24,13 @@
         <relativePath/>
     </parent>
 
-    <repositories>
-        <repository>
-            <id>mvn-repo</id>
-            <url>https://raw.github.com/kinfkong/spring-social/mvn-repo/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <properties>
         <java.version>1.8</java.version>
         <spring.version>5.0.3.RELEASE</spring.version>
         <jackson.version>2.9.4</jackson.version>
         <spring-security.version>5.0.1.RELEASE</spring-security.version>
-        <spring-social.version>1.1.5.RELEASE</spring-social.version>
+        <spring-social.version>1.1.4.RELEASE</spring-social.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

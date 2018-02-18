@@ -15,6 +15,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import reactor.Environment;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -55,7 +57,11 @@ public class DbToolApplication implements CommandLineRunner {
             } else if (args[0].equals("drop") && args[1].equals("collections")) {
                 collectionTool.dropAllCollections();
             } else if (args[0].equals("dump")) {
-                collectionTool.dumpCollection(args[1]);
+                List<String> array = new ArrayList<>();
+                for (int i = 1; i < args.length; i++) {
+                    array.add(args[i]);
+                }
+                collectionTool.dumpCollections(array);
             } else if (args[0].equals("load")) {
                 collectionTool.loadAllCollections();
             }

@@ -78,6 +78,10 @@ public class CollectionTool {
         }
     }
 
+    public void dumpCollections(List<String> names) {
+        names.forEach(this::dumpCollection);
+    }
+
     public void loadCollection(String name) {
         try {
             String dstring = FileUtils.readFileToString(new File(DUMP_DIR + name + ".json"), "UTF-8");

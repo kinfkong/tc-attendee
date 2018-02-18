@@ -1,0 +1,2 @@
+Besides the new features for this challenge, also changing the followings for the previous challenge:
+1). change the Timezone entity properties

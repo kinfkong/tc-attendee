@@ -4,21 +4,36 @@ zuul:
       path: /userNotes/**
       serviceId: microservice2
       sensitiveHeaders:
+      stripPrefix: false
+
+    notifications:
+      path: /notifications/**
+      serviceId: microservice2
+      sensitiveHeaders:
+      stripPrefix: false
+
+    emails:
+      path: /emails/**
+      serviceId: microservice2
+      sensitiveHeaders:
+      stripPrefix: false
+
     others:
       path: /**
       serviceId: microservice1
       sensitiveHeaders:
+      stripPrefix: false
 
 microservice1:
   ribbon:
     listOfServers: http://localhost:8081
-    connectTimeout: 10000
+    ConnectTimeout: 10000
     ReadTimeout: 180000
 
 microservice2:
   ribbon:
     listOfServers: http://localhost:8082
-    connectTimeout: 10000
+    ConnectTimeout: 10000
     ReadTimeout: 180000
 
 hystrix.command.default.execution.timeout.enabled: false

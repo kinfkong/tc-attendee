@@ -1,5 +1,5 @@
 [
-{"_attachments":"attachments/","_rid":"RXJ0AN5JewYBAAAAAAAAAA==","name":"CREATE_EVENT","id":"dbcb194c-e476-7466-060f-b31fb670a5ed","_self":"dbs/RXJ0AA==/colls/RXJ0AN5JewY=/docs/RXJ0AN5JewYBAAAAAAAAAA==/","_etag":"\"0000621e-0000-0000-0000-5a7f40570000\"","_ts":1518288983},
-{"_attachments":"attachments/","_rid":"RXJ0AN5JewYCAAAAAAAAAA==","name":"CREATE_SESSION","id":"5ee8597f-f368-b5ec-bc7f-f8eaee2b33ef","_self":"dbs/RXJ0AA==/colls/RXJ0AN5JewY=/docs/RXJ0AN5JewYCAAAAAAAAAA==/","_etag":"\"0000631e-0000-0000-0000-5a7f40570000\"","_ts":1518288983},
-{"_attachments":"attachments/","_rid":"RXJ0AN5JewYDAAAAAAAAAA==","name":"VIEW_EVENT","id":"c745e285-623b-3630-e80b-b9668cb5ca16","_self":"dbs/RXJ0AA==/colls/RXJ0AN5JewY=/docs/RXJ0AN5JewYDAAAAAAAAAA==/","_etag":"\"0000641e-0000-0000-0000-5a7f40570000\"","_ts":1518288983}
+{"_attachments":"attachments/","_rid":"TK4PAJubrg4BAAAAAAAAAA==","name":"CREATE_EVENT","id":"dbcb194c-e476-7466-060f-b31fb670a5ed","_self":"dbs/TK4PAA==/colls/TK4PAJubrg4=/docs/TK4PAJubrg4BAAAAAAAAAA==/","_etag":"\"0000c625-0000-0000-0000-5a88cc6a0000\"","_ts":1518914666},
+{"_attachments":"attachments/","_rid":"TK4PAJubrg4CAAAAAAAAAA==","name":"CREATE_SESSION","id":"5ee8597f-f368-b5ec-bc7f-f8eaee2b33ef","_self":"dbs/TK4PAA==/colls/TK4PAJubrg4=/docs/TK4PAJubrg4CAAAAAAAAAA==/","_etag":"\"0000c725-0000-0000-0000-5a88cc6a0000\"","_ts":1518914666},
+{"_attachments":"attachments/","_rid":"TK4PAJubrg4DAAAAAAAAAA==","name":"VIEW_EVENT","id":"c745e285-623b-3630-e80b-b9668cb5ca16","_self":"dbs/TK4PAA==/colls/TK4PAJubrg4=/docs/TK4PAJubrg4DAAAAAAAAAA==/","_etag":"\"0000c825-0000-0000-0000-5a88cc6a0000\"","_ts":1518914666}
 ]
